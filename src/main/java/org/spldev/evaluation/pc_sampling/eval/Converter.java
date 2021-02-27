@@ -184,7 +184,7 @@ public class Converter {
 								dnf = new CNF(variableMap, Clauses.convertNF(cnf.getClauses()));
 								negatedDnf = new CNF(variableMap, cnf.getClauses().negate());
 							} else if (simplifiedFormula instanceof Literal) {
-								final LiteralList clause = getClause(tempPC.formula, variableMap);
+								final LiteralList clause = getClause(simplifiedFormula, variableMap);
 								if (clause != null) {
 									clauses.add(clause);
 								}
@@ -197,21 +197,6 @@ public class Converter {
 								return pc;
 							}
 						}
-//						Formulas.distributiveLawTransform(simplifyForNF(formula), normalForm);
-//
-//						final ClauseList cnfClauses = new ClauseList();
-//						Formula cnfFormula = Formulas.toCNF(tempPC.formula);
-//						if (!(cnfFormula instanceof And)) {
-//							cnfFormula = new And(cnfFormula);
-//						}
-//						cnfFormula.mapChildren(c -> (c instanceof Literal) ? new Or((Literal) c) : null);
-//
-//						cnfFormula.getChildren().stream().map(exp -> getClause(exp, variableMap))
-//								.filter(Objects::nonNull).forEach(cnfClauses::add);
-//						final CNF cnf = new CNF(variableMap, cnfClauses);
-//
-//						final CNF dnf = new CNF(variableMap, Clauses.convertNF(cnf.getClauses()));
-//						final CNF negatedDnf = new CNF(variableMap, cnf.getClauses().negate());
 						if (negatedDnf.getClauses().isEmpty() || (negatedDnf.getClauses().get(0).size() == 0)
 								|| dnf.getClauses().isEmpty() || (dnf.getClauses().get(0).size() == 0)) {
 							pc = new PresenceCondition();
@@ -238,7 +223,7 @@ public class Converter {
 	private LiteralList getClause(Expression clauseExpression, VariableMap mapping) {
 		if (clauseExpression instanceof Literal) {
 			final Literal literal = (Literal) clauseExpression;
-			final int variable = mapping.getIndex(literal.getName()).orElseThrow(RuntimeException::new);
+			final int variable = mapping.getIndex(literal.getName()).orElseThrow(() -> new RuntimeException(literal.getName()));
 			return new LiteralList(new int[] { literal.isPositive() ? variable : -variable }, Order.NATURAL, false);
 		} else {
 			final List<? extends Expression> clauseChildren = clauseExpression.getChildren();
@@ -247,7 +232,7 @@ public class Converter {
 			} else {
 				final int[] literals = clauseChildren.stream().filter(literal -> literal != Literal.False)
 						.mapToInt(literal -> {
-							final int variable = mapping.getIndex(literal.getName()).orElseThrow(RuntimeException::new);
+							final int variable = mapping.getIndex(literal.getName()).orElseThrow(() -> new RuntimeException(literal.getName()));
 							return ((Literal) literal).isPositive() ? variable : -variable;
 						}).toArray();
 				return new LiteralList(literals, Order.NATURAL).clean();

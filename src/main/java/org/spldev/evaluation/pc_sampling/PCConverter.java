@@ -94,10 +94,9 @@ public class PCConverter extends Evaluator {
 					if (cnf != null) {
 						final Converter pcfmProcessor = new Converter(cnf, systemName);
 						evalConvert(pcfmProcessor, Constants.convertedPCFMFileName);
-					} else {
-						final Converter pcfmProcessor = new Converter(null, systemName);
-						evalConvert(pcfmProcessor, Constants.convertedPCFileName);
 					}
+					final Converter pcfmProcessor = new Converter(null, systemName);
+					evalConvert(pcfmProcessor, Constants.convertedPCFileName);
 				} catch (final Exception e) {
 					Logger.logError(e);
 				}
