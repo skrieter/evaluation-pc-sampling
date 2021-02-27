@@ -23,6 +23,7 @@
 package org.spldev.evaluation.pc_sampling;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.spldev.evaluation.Evaluator;
 import org.spldev.evaluation.pc_sampling.eval.Constants;
@@ -124,16 +125,26 @@ public class PCConverter extends Evaluator {
 
 				conversionWriter.addValue(timeNeeded);
 				if (pcList != null) {
+					HashSet<CNF> pcs = new HashSet<>();
 					long countClauses = 0;
 					long countLiterals = 0;
 					for (final PresenceCondition pc : pcList) {
 						final CNF dnf = pc.getDnf();
-						countClauses += dnf.getClauses().size();
-						for (final LiteralList clause : dnf.getClauses()) {
-							countLiterals += clause.size();
+						if (pcs.add(dnf)) {
+							countClauses += dnf.getClauses().size();
+							for (final LiteralList clause : dnf.getClauses()) {
+								countLiterals += clause.size();
+							}
+						}
+						final CNF ndnf = pc.getNegatedDnf();
+						if (pcs.add(ndnf)) {
+							countClauses += ndnf.getClauses().size();
+							for (final LiteralList clause : ndnf.getClauses()) {
+								countLiterals += clause.size();
+							}
 						}
 					}
-					conversionWriter.addValue(pcList.size());
+					conversionWriter.addValue(pcs.size());
 					conversionWriter.addValue(false);
 					conversionWriter.addValue(countClauses);
 					conversionWriter.addValue(countLiterals);
