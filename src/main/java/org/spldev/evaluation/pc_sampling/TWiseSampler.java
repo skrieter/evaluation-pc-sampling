@@ -383,7 +383,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 			for (final ClauseList condition : conditions) {
 				final ClauseList adaptedClauseList = new ClauseList();
 				for (final LiteralList clause : condition) {
-					adaptedClauseList.add(clause.adapt(cnf.getVariableMap(), randomCNF.getVariableMap()));
+					adaptedClauseList.add(clause.adapt(cnf.getVariableMap(), randomCNF.getVariableMap()).get());
 				}
 				adaptedConditions.add(adaptedClauseList);
 			}
@@ -401,8 +401,11 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 	protected void writeSamples(final String sampleMethod, final List<LiteralList> configurationList) {
 		try {
-			Files.write(curSampleDir.resolve(sampleMethod + ".sample"), configurationList.stream()
-					.map(this::reorderSolution).map(TWiseSampler::toString).collect(Collectors.toList()));
+			Files.write(curSampleDir.resolve(sampleMethod + ".sample"), //
+					configurationList.stream() //
+					.map(this::reorderSolution) //
+					.map(TWiseSampler::toString) //
+					.collect(Collectors.toList()));
 		} catch (final IOException e) {
 			Logger.logError(e);
 		}
@@ -410,7 +413,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 	private LiteralList reorderSolution(LiteralList solution) {
 		final LiteralList adaptedSolution = solution.adapt(randomizedModelCNF.getVariableMap(),
-				modelCNF.getVariableMap());
+				modelCNF.getVariableMap()).get();
 		adaptedSolution.setOrder(Order.INDEX);
 		return adaptedSolution;
 	}

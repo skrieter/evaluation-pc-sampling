@@ -43,10 +43,6 @@ import org.spldev.formula.clause.CNF;
 import org.spldev.formula.clause.ClauseList;
 import org.spldev.formula.clause.LiteralList;
 import org.spldev.formula.clause.configuration.twise.TWiseCombiner;
-import org.spldev.formula.expression.Formula;
-import org.spldev.formula.expression.atomic.literal.ErrorLiteral;
-import org.spldev.formula.expression.atomic.literal.LiteralVariable;
-import org.spldev.tree.Trees;
 
 public class Grouper {
 
@@ -191,21 +187,6 @@ public class Grouper {
 			streamBuilder.accept(pc.getNegatedDnf().getClauses());
 		}
 		return streamBuilder.build().filter(list -> !list.isEmpty());
-	}
-
-	@SuppressWarnings("unused")
-	private Formula adaptVariableNames(Formula formula) {
-		Trees.preOrderStream(formula).forEach(n -> n.mapChildren(node -> {
-			if (node instanceof ErrorLiteral) {
-				final ErrorLiteral l = (ErrorLiteral) node;
-				final String var = l.getName();
-				if (var.startsWith("CONFIG_")) {
-					return new LiteralVariable(var.substring("CONFIG_".length()), l.isPositive());
-				}
-			}
-			return null;
-		}));
-		return formula;
 	}
 
 	private void sort(List<ClauseList> exps) {

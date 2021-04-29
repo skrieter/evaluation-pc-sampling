@@ -52,12 +52,12 @@ import org.spldev.formula.expression.io.parse.NodeReader;
 import org.spldev.formula.expression.io.parse.NodeReader.ErrorHandling;
 import org.spldev.formula.expression.io.parse.Symbols;
 import org.spldev.formula.expression.io.parse.Symbols.Operator;
-import org.spldev.tree.Trees;
-import org.spldev.tree.visitor.TreePrinter;
 import org.spldev.util.Result;
 import org.spldev.util.io.FileHandler;
 import org.spldev.util.io.csv.CSVWriter;
 import org.spldev.util.logging.Logger;
+import org.spldev.util.tree.Trees;
+import org.spldev.util.tree.visitor.TreePrinter;
 
 public class CSVReader extends Evaluator {
 

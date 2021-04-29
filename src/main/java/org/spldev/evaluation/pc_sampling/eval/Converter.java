@@ -55,8 +55,8 @@ import org.spldev.formula.expression.io.parse.NodeReader;
 import org.spldev.formula.expression.io.parse.NodeReader.ErrorHandling;
 import org.spldev.formula.expression.io.parse.Symbols;
 import org.spldev.formula.expression.io.parse.Symbols.Operator;
-import org.spldev.tree.Trees;
 import org.spldev.util.logging.Logger;
+import org.spldev.util.tree.Trees;
 
 public class Converter {
 
@@ -235,7 +235,7 @@ public class Converter {
 							final int variable = mapping.getIndex(literal.getName()).orElseThrow(() -> new RuntimeException(literal.getName()));
 							return ((Literal) literal).isPositive() ? variable : -variable;
 						}).toArray();
-				return new LiteralList(literals, Order.NATURAL).clean();
+				return new LiteralList(literals, Order.NATURAL).clean().get();
 			}
 		}
 	}
