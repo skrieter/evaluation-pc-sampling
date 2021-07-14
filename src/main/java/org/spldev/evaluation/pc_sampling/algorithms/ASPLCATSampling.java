@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spldev.evaluation.process.Algorithm;
-import org.spldev.formula.VariableMap;
 import org.spldev.formula.clause.LiteralList;
 import org.spldev.formula.clause.LiteralList.Order;
+import org.spldev.formula.expression.atomic.literal.VariableMap;
 import org.spldev.formula.clause.SolutionList;
 import org.spldev.util.logging.Logger;
 

@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -30,11 +30,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.spldev.evaluation.pc_sampling.eval.Constants;
-import org.spldev.formula.VariableMap;
 import org.spldev.formula.clause.CNF;
 import org.spldev.formula.clause.ClauseList;
 import org.spldev.formula.clause.Clauses;
 import org.spldev.formula.clause.LiteralList;
+import org.spldev.formula.expression.atomic.literal.VariableMap;
 import org.spldev.formula.expression.io.DimacsReader;
 
 public class KconfigDimacsReader {

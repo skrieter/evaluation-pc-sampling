@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -35,7 +35,9 @@ import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
 import org.spldev.evaluation.util.ModelReader;
 import org.spldev.formula.clause.CNF;
 import org.spldev.formula.clause.ClauseList;
-import org.spldev.formula.clause.io.DIMACSFormat;
+import org.spldev.formula.clause.Clauses;
+import org.spldev.formula.expression.Formula;
+import org.spldev.formula.expression.io.DIMACSFormat;
 import org.spldev.util.Result;
 import org.spldev.util.io.csv.CSVWriter;
 import org.spldev.util.io.format.FormatSupplier;
@@ -82,10 +84,10 @@ public class PCGrouper extends Evaluator {
 				tabFormatter.incTabLevel();
 				final String systemName = config.systemNames.get(systemID);
 
-				final ModelReader<CNF> fmReader = new ModelReader<>();
+				final ModelReader<Formula> fmReader = new ModelReader<>();
 				fmReader.setPathToFiles(config.modelPath);
 				fmReader.setFormatSupplier(FormatSupplier.of(new DIMACSFormat()));
-				final Result<CNF> fm = fmReader.read(systemName);
+				final Result<CNF> fm = fmReader.read(systemName).map(Clauses::convertToCNF);
 				if (fm.isEmpty()) {
 					Logger.logInfo("No feature model!");
 				}

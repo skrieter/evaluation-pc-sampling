@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.

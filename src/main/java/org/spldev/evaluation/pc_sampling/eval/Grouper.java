@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -38,11 +38,11 @@ import java.util.stream.Stream;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceCondition;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceConditionList;
 import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
-import org.spldev.formula.VariableMap;
 import org.spldev.formula.clause.CNF;
 import org.spldev.formula.clause.ClauseList;
 import org.spldev.formula.clause.LiteralList;
 import org.spldev.formula.clause.configuration.twise.TWiseCombiner;
+import org.spldev.formula.expression.atomic.literal.VariableMap;
 
 public class Grouper {
 

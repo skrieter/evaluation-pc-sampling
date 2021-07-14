@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -50,17 +50,20 @@ import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceConditionList;
 import org.spldev.evaluation.pc_sampling.eval.properties.AlgorithmProperty;
 import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
 import org.spldev.evaluation.process.Algorithm;
-import org.spldev.evaluation.properties.IntProperty;
-import org.spldev.evaluation.properties.StringListProperty;
+import org.spldev.evaluation.properties.ListProperty;
+import org.spldev.evaluation.properties.Property;
 import org.spldev.evaluation.util.ModelReader;
 import org.spldev.formula.clause.CNF;
 import org.spldev.formula.clause.ClauseList;
+import org.spldev.formula.clause.Clauses;
 import org.spldev.formula.clause.LiteralList;
 import org.spldev.formula.clause.LiteralList.Order;
 import org.spldev.formula.clause.SolutionList;
 import org.spldev.formula.clause.analysis.CountSolutionsAnalysis;
-import org.spldev.formula.clause.io.DIMACSFormat;
+import org.spldev.formula.clause.io.DIMACSFormatCNF;
 import org.spldev.formula.clause.io.ExpressionGroupFormat;
+import org.spldev.formula.expression.Formula;
+import org.spldev.formula.expression.io.DIMACSFormat;
 import org.spldev.util.Result;
 import org.spldev.util.io.FileHandler;
 import org.spldev.util.io.csv.CSVWriter;
@@ -82,10 +85,11 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 	}
 
 	protected static final AlgorithmProperty algorithmsProperty = new AlgorithmProperty();
-	protected static final StringListProperty tProperty = new StringListProperty("t");
-	protected static final StringListProperty mProperty = new StringListProperty("m");
+	protected static final ListProperty<String> tProperty = new ListProperty<>("t", Property.StringConverter);
+	protected static final ListProperty<String> mProperty = new ListProperty<>("m", Property.StringConverter);
 	protected static final GroupingProperty grouping = new GroupingProperty();
-	protected static final IntProperty randomIterationsProperty = new IntProperty("random_iterations");
+	protected static final Property<Integer> randomIterationsProperty = new Property<>("random_iterations",
+			Property.IntegerConverter);
 
 	public static int YASA_MIN_SIZE;
 	public static int YASA_MAX_SIZE;
@@ -206,15 +210,15 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 	protected CNF prepareModel() throws Exception {
 		final String systemName = config.systemNames.get(systemID);
 
-		final ModelReader<CNF> fmReader = new ModelReader<>();
+		final ModelReader<Formula> fmReader = new ModelReader<>();
 		fmReader.setPathToFiles(config.modelPath);
 		fmReader.setFormatSupplier(FormatSupplier.of(new DIMACSFormat()));
-		final Result<CNF> fm = fmReader.read(systemName);
+		final Result<CNF> fm = fmReader.read(systemName).map(Clauses::convertToCNF);
 
 		final CNF modelCNF = fm.orElse(() -> {
 			try {
 				return PresenceConditionList.readPCList(systemName, Constants.convertedPCFileName).getFormula();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				Logger.logError(e);
 				return null;
 			}
@@ -222,9 +226,9 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 		curSampleDir = samplesDir.resolve(String.valueOf(config.systemIDs.get(systemID)));
 		Files.createDirectories(curSampleDir);
-		final DIMACSFormat format = new DIMACSFormat();
+		final DIMACSFormatCNF format = new DIMACSFormatCNF();
 		final Path fileName = curSampleDir.resolve("model." + format.getFileExtension());
-		FileHandler.write(modelCNF, fileName, format);
+		FileHandler.serialize(modelCNF, fileName, format);
 
 		return modelCNF;
 	}
@@ -232,14 +236,14 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 	@Override
 	protected CNF adaptModel() throws IOException {
 		final CNF randomCNF = modelCNF.randomize(new Random(config.randomSeed.getValue() + systemIteration));
-		final DIMACSFormat format = new DIMACSFormat();
+		final DIMACSFormatCNF format = new DIMACSFormatCNF();
 		final Path fileName = config.tempPath.resolve("model" + "." + format.getFileExtension());
-		FileHandler.write(randomCNF, fileName, format.getInstance());
+		FileHandler.serialize(randomCNF, fileName, format);
 
 		for (final String groupingValue : grouping.getValue()) {
 			try {
 				saveExpressions(modelCNF, randomCNF, groupingValue);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				Logger.logError(e);
 			}
 		}
@@ -272,7 +276,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 			final ExpressionGroupFormat format = new ExpressionGroupFormat();
 			final Path fileName = config.tempPath.resolve("expressions_" + group + "." + format.getFileExtension());
-			FileHandler.write(expressionGroups, fileName, format);
+			FileHandler.serialize(expressionGroups, fileName, format);
 		}
 	}
 
@@ -403,17 +407,17 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 		try {
 			Files.write(curSampleDir.resolve(sampleMethod + ".sample"), //
 					configurationList.stream() //
-					.map(this::reorderSolution) //
-					.map(TWiseSampler::toString) //
-					.collect(Collectors.toList()));
+							.map(this::reorderSolution) //
+							.map(TWiseSampler::toString) //
+							.collect(Collectors.toList()));
 		} catch (final IOException e) {
 			Logger.logError(e);
 		}
 	}
 
 	private LiteralList reorderSolution(LiteralList solution) {
-		final LiteralList adaptedSolution = solution.adapt(randomizedModelCNF.getVariableMap(),
-				modelCNF.getVariableMap()).get();
+		final LiteralList adaptedSolution = solution
+				.adapt(randomizedModelCNF.getVariableMap(), modelCNF.getVariableMap()).get();
 		adaptedSolution.setOrder(Order.INDEX);
 		return adaptedSolution;
 	}

@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -36,18 +36,19 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.spldev.evaluation.Evaluator;
-import org.spldev.formula.VariableMap;
 import org.spldev.formula.clause.CNF;
 import org.spldev.formula.clause.ClauseList;
+import org.spldev.formula.clause.Clauses;
 import org.spldev.formula.clause.LiteralList;
 import org.spldev.formula.clause.LiteralList.Order;
 import org.spldev.formula.clause.configuration.twise.PresenceConditionManager;
-import org.spldev.formula.clause.io.DIMACSFormat;
 import org.spldev.formula.expression.Expression;
 import org.spldev.formula.expression.Formula;
 import org.spldev.formula.expression.Formulas;
 import org.spldev.formula.expression.atomic.literal.Literal;
+import org.spldev.formula.expression.atomic.literal.VariableMap;
 import org.spldev.formula.expression.compound.And;
+import org.spldev.formula.expression.io.DIMACSFormat;
 import org.spldev.formula.expression.io.parse.NodeReader;
 import org.spldev.formula.expression.io.parse.NodeReader.ErrorHandling;
 import org.spldev.formula.expression.io.parse.Symbols;
@@ -179,7 +180,7 @@ public class CSVReader extends Evaluator {
 
 		final DIMACSFormat format = new DIMACSFormat();
 		final Path modelFile = sampleDir.resolve("model." + format.getFileExtension());
-		final Result<CNF> parseResult = FileHandler.parse(modelFile, format);
+		final Result<CNF> parseResult = FileHandler.parse(modelFile, format).map(Clauses::convertToCNF);
 		if (parseResult.isEmpty()) {
 			Logger.logProblems(parseResult.getProblems());
 			return;

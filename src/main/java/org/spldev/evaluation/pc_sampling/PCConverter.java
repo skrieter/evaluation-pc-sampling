@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -32,8 +32,10 @@ import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceCondition;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceConditionList;
 import org.spldev.evaluation.util.ModelReader;
 import org.spldev.formula.clause.CNF;
+import org.spldev.formula.clause.Clauses;
 import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.io.DIMACSFormat;
+import org.spldev.formula.expression.Formula;
+import org.spldev.formula.expression.io.DIMACSFormat;
 import org.spldev.util.Result;
 import org.spldev.util.io.csv.CSVWriter;
 import org.spldev.util.io.format.FormatSupplier;
@@ -79,10 +81,10 @@ public class PCConverter extends Evaluator {
 				tabFormatter.incTabLevel();
 				final String systemName = config.systemNames.get(systemID);
 
-				final ModelReader<CNF> fmReader = new ModelReader<>();
+				final ModelReader<Formula> fmReader = new ModelReader<>();
 				fmReader.setPathToFiles(config.modelPath);
 				fmReader.setFormatSupplier(FormatSupplier.of(new DIMACSFormat()));
-				final Result<CNF> fm = fmReader.read(systemName);
+				final Result<CNF> fm = fmReader.read(systemName).map(Clauses::convertToCNF);
 				if (fm.isEmpty()) {
 					Logger.logInfo("No feature model!");
 				}
@@ -124,7 +126,7 @@ public class PCConverter extends Evaluator {
 
 				conversionWriter.addValue(timeNeeded);
 				if (pcList != null) {
-					HashSet<CNF> pcs = new HashSet<>();
+					final HashSet<CNF> pcs = new HashSet<>();
 					long countClauses = 0;
 					long countLiterals = 0;
 					for (final PresenceCondition pc : pcList) {

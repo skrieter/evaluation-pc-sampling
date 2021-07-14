@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -38,7 +38,6 @@ import java.util.stream.Stream;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.FileProvider;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceCondition;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceConditionList;
-import org.spldev.formula.VariableMap;
 import org.spldev.formula.clause.CNF;
 import org.spldev.formula.clause.ClauseList;
 import org.spldev.formula.clause.Clauses;
@@ -49,6 +48,7 @@ import org.spldev.formula.expression.Formula;
 import org.spldev.formula.expression.Formulas;
 import org.spldev.formula.expression.Formulas.NormalForm;
 import org.spldev.formula.expression.atomic.literal.Literal;
+import org.spldev.formula.expression.atomic.literal.VariableMap;
 import org.spldev.formula.expression.compound.And;
 import org.spldev.formula.expression.compound.Or;
 import org.spldev.formula.expression.io.parse.NodeReader;
@@ -130,8 +130,7 @@ public class Converter {
 									pcNames.addAll(Formulas.getVariables(formula));
 									return new TempPC(expr, formula, sourceFilePath);
 								}
-							})
-							.filter(Objects::nonNull) //
+							}).filter(Objects::nonNull) //
 					;
 				}).collect(Collectors.toList());
 
@@ -149,16 +148,16 @@ public class Converter {
 						final ClauseList clauses = new ClauseList();
 						final CNF dnf;
 						final CNF negatedDnf;
-						if (Formulas.checkNormalForm(tempPC.formula, NormalForm.CNF)) {
-							Formula cnfFormula = Trees.cloneTree(tempPC.formula);
+						if (Formulas.isNF(tempPC.formula, NormalForm.CNF)) {
+							final Formula cnfFormula = Trees.cloneTree(tempPC.formula);
 							cnfFormula.mapChildren(c -> (c instanceof Literal) ? new Or((Literal) c) : null);
 							cnfFormula.getChildren().stream().map(exp -> getClause(exp, variableMap))
 									.filter(Objects::nonNull).forEach(clauses::add);
 							final CNF cnf = new CNF(variableMap, clauses);
 							dnf = new CNF(variableMap, Clauses.convertNF(cnf.getClauses()));
 							negatedDnf = new CNF(variableMap, cnf.getClauses().negate());
-						} else if (Formulas.checkNormalForm(tempPC.formula, NormalForm.DNF)) {
-							Formula dnfFormula = Trees.cloneTree(tempPC.formula);
+						} else if (Formulas.isNF(tempPC.formula, NormalForm.DNF)) {
+							final Formula dnfFormula = Trees.cloneTree(tempPC.formula);
 							dnfFormula.mapChildren(c -> (c instanceof Literal) ? new And((Literal) c) : null);
 							dnfFormula.getChildren().stream().map(exp -> getClause(exp, variableMap))
 									.filter(Objects::nonNull).forEach(clauses::add);
@@ -166,9 +165,10 @@ public class Converter {
 							final CNF cnf = new CNF(variableMap, Clauses.convertNF(dnf.getClauses()));
 							negatedDnf = new CNF(variableMap, cnf.getClauses().negate());
 						} else {
-							Formula simplifiedFormula = Formulas.simplifyForNF(tempPC.formula);
+							final Formula simplifiedFormula = Formulas.simplifyForNF(tempPC.formula);
 							if (simplifiedFormula instanceof Or) {
-								Formula dnfFormula = Formulas.distributiveLawTransform(simplifiedFormula, NormalForm.DNF);
+								final Formula dnfFormula = Formulas.distributiveLawTransform(simplifiedFormula,
+										NormalForm.DNF);
 								dnfFormula.mapChildren(c -> (c instanceof Literal) ? new And((Literal) c) : null);
 								dnfFormula.getChildren().stream().map(exp -> getClause(exp, variableMap))
 										.filter(Objects::nonNull).forEach(clauses::add);
@@ -176,7 +176,8 @@ public class Converter {
 								final CNF cnf = new CNF(variableMap, Clauses.convertNF(dnf.getClauses()));
 								negatedDnf = new CNF(variableMap, cnf.getClauses().negate());
 							} else if (simplifiedFormula instanceof And) {
-								Formula cnfFormula = Formulas.distributiveLawTransform(simplifiedFormula, NormalForm.CNF);
+								final Formula cnfFormula = Formulas.distributiveLawTransform(simplifiedFormula,
+										NormalForm.CNF);
 								cnfFormula.mapChildren(c -> (c instanceof Literal) ? new Or((Literal) c) : null);
 								cnfFormula.getChildren().stream().map(exp -> getClause(exp, variableMap))
 										.filter(Objects::nonNull).forEach(clauses::add);
@@ -223,7 +224,8 @@ public class Converter {
 	private LiteralList getClause(Expression clauseExpression, VariableMap mapping) {
 		if (clauseExpression instanceof Literal) {
 			final Literal literal = (Literal) clauseExpression;
-			final int variable = mapping.getIndex(literal.getName()).orElseThrow(() -> new RuntimeException(literal.getName()));
+			final int variable = mapping.getIndex(literal.getName())
+					.orElseThrow(() -> new RuntimeException(literal.getName()));
 			return new LiteralList(new int[] { literal.isPositive() ? variable : -variable }, Order.NATURAL, false);
 		} else {
 			final List<? extends Expression> clauseChildren = clauseExpression.getChildren();
@@ -232,7 +234,8 @@ public class Converter {
 			} else {
 				final int[] literals = clauseChildren.stream().filter(literal -> literal != Literal.False)
 						.mapToInt(literal -> {
-							final int variable = mapping.getIndex(literal.getName()).orElseThrow(() -> new RuntimeException(literal.getName()));
+							final int variable = mapping.getIndex(literal.getName())
+									.orElseThrow(() -> new RuntimeException(literal.getName()));
 							return ((Literal) literal).isPositive() ? variable : -variable;
 						}).toArray();
 				return new LiteralList(literals, Order.NATURAL).clean().get();

@@ -3,7 +3,7 @@ license:
   version: 3
 program:
   name: Evaluation-PC-Sampling
-  description: Program for the evalaution of PC-Sampling.
+  description: Program for the evaluation of PC-Sampling.
   authors: Sebastian Krieter
   url: https://github.com/skrieter/evaluation-pc-sampling
   year: 2021

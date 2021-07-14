@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -22,14 +22,14 @@
  */
 package org.spldev.evaluation.pc_sampling.eval.properties;
 
-import org.spldev.evaluation.properties.StringListProperty;
+import org.spldev.evaluation.properties.ListProperty;
 
-public class AlgorithmProperty extends StringListProperty {
+public class AlgorithmProperty extends ListProperty<String> {
 
 	public static final String PRESENCE_CONDITION = "PC";
 
 	public AlgorithmProperty() {
-		super("algorithm");
+		super("algorithm", StringConverter);
 	}
 
 }

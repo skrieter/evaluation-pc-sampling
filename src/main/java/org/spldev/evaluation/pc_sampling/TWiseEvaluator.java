@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -37,8 +37,10 @@ import org.spldev.evaluation.Evaluator;
 import org.spldev.evaluation.pc_sampling.eval.Constants;
 import org.spldev.evaluation.pc_sampling.eval.Expressions;
 import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
-import org.spldev.evaluation.properties.StringListProperty;
+import org.spldev.evaluation.properties.ListProperty;
+import org.spldev.evaluation.properties.Property;
 import org.spldev.formula.clause.CNF;
+import org.spldev.formula.clause.Clauses;
 import org.spldev.formula.clause.LiteralList;
 import org.spldev.formula.clause.LiteralList.Order;
 import org.spldev.formula.clause.configuration.twise.CoverageStatistic;
@@ -48,8 +50,8 @@ import org.spldev.formula.clause.configuration.twise.TWiseConfigurationUtil;
 import org.spldev.formula.clause.configuration.twise.TWiseStatisticGenerator;
 import org.spldev.formula.clause.configuration.twise.TWiseStatisticGenerator.ConfigurationScore;
 import org.spldev.formula.clause.configuration.twise.ValidityStatistic;
-import org.spldev.formula.clause.io.DIMACSFormat;
 import org.spldev.formula.clause.solver.Sat4JSolver;
+import org.spldev.formula.expression.io.DIMACSFormat;
 import org.spldev.util.Result;
 import org.spldev.util.io.FileHandler;
 import org.spldev.util.io.csv.CSVWriter;
@@ -68,7 +70,7 @@ public class TWiseEvaluator extends Evaluator {
 		evaluator.dispose();
 	}
 
-	protected static final StringListProperty coverageT = new StringListProperty("t");
+	protected static final ListProperty<String> coverageT = new ListProperty<>("t", Property.StringConverter);
 	protected static final GroupingProperty coverageGrouping = new GroupingProperty("grouping");
 
 	protected CSVWriter evaluationWriter;
@@ -136,7 +138,7 @@ public class TWiseEvaluator extends Evaluator {
 
 		final DIMACSFormat format = new DIMACSFormat();
 		final Path modelFile = sampleDir.resolve("model." + format.getFileExtension());
-		final Result<CNF> parseResult = FileHandler.parse(modelFile, format);
+		final Result<CNF> parseResult = FileHandler.parse(modelFile, format).map(Clauses::convertToCNF);
 //		if (parseResult.isEmpty()) {
 //			Logger.logProblems(parseResult.getProblems());
 //			return;

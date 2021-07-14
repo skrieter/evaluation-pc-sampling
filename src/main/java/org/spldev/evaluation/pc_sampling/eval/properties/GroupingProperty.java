@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Evaluation-PC-Sampling - Program for the evalaution of PC-Sampling.
+ * Evaluation-PC-Sampling - Program for the evaluation of PC-Sampling.
  * Copyright (C) 2021  Sebastian Krieter
  * 
  * This file is part of Evaluation-PC-Sampling.
@@ -22,9 +22,9 @@
  */
 package org.spldev.evaluation.pc_sampling.eval.properties;
 
-import org.spldev.evaluation.properties.StringListProperty;
+import org.spldev.evaluation.properties.ListProperty;
 
-public class GroupingProperty extends StringListProperty {
+public class GroupingProperty extends ListProperty<String> {
 
 	public static final String PC_ALL_FM = "pc_all_fm";
 	public static final String PC_ALL_FM_FM = "pc_all_fm_fm";
@@ -38,11 +38,11 @@ public class GroupingProperty extends StringListProperty {
 	public static final String FM_ONLY = "fm_only";
 
 	public GroupingProperty() {
-		super("grouping");
+		super("grouping", StringConverter);
 	}
 
 	public GroupingProperty(String alternateName) {
-		super(alternateName);
+		super(alternateName, StringConverter);
 	}
 
 }
