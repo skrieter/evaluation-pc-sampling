@@ -62,15 +62,9 @@ import org.spldev.util.tree.visitor.TreePrinter;
 
 public class CSVReader extends Evaluator {
 
-	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
-			System.out.println("Configuration path and name not specified!");
-			return;
-		}
-		final CSVReader evaluator = new CSVReader(args[0], args[1]);
-		evaluator.init();
-		evaluator.run();
-		evaluator.dispose();
+	@Override
+	public String getId() {
+		return "eval-csv-reader";
 	}
 
 	protected CSVWriter evaluationWriter;
@@ -86,10 +80,6 @@ public class CSVReader extends Evaluator {
 		String formulaString;
 	}
 
-	public CSVReader(String configPath, String configName) throws Exception {
-		super(configPath, configName);
-	}
-
 	@Override
 	protected void addCSVWriters() {
 		super.addCSVWriters();
@@ -100,9 +90,7 @@ public class CSVReader extends Evaluator {
 	protected final HashMap<String, PresenceConditionManager> expressionMap = new HashMap<>();
 
 	@Override
-	public void run() {
-		super.run();
-
+	public void evaluate() {
 		final NodeReader nodeReader = new NodeReader();
 		final Symbols symbols = new Symbols();
 		symbols.setSymbol(Operator.NOT, "!");

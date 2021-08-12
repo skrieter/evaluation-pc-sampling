@@ -73,17 +73,6 @@ import org.spldev.util.logging.Logger;
 
 public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<SolutionList>> {
 
-	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
-			System.out.println("Configuration path and name not specified!");
-			return;
-		}
-		final TWiseSampler evaluator = new TWiseSampler(args[0], args[1]);
-		evaluator.init();
-		evaluator.run();
-		evaluator.dispose();
-	}
-
 	protected static final AlgorithmProperty algorithmsProperty = new AlgorithmProperty();
 	protected static final ListProperty<String> tProperty = new ListProperty<>("t", Property.StringConverter);
 	protected static final ListProperty<String> mProperty = new ListProperty<>("m", Property.StringConverter);
@@ -98,8 +87,9 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 	protected Path samplesDir, curSampleDir;
 
-	public TWiseSampler(String configPath, String configName) throws Exception {
-		super(configPath, configName);
+	@Override
+	public String getId() {
+		return "eval-twise-sampler";
 	}
 
 	@Override

@@ -31,23 +31,13 @@ import org.spldev.util.logging.Logger;
 
 public class PCExtractor extends Evaluator {
 
-	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
-			System.out.println("Configuration path and name not specified!");
-			return;
-		}
-		final PCExtractor evaluator = new PCExtractor(args[0], args[1]);
-		evaluator.init();
-		evaluator.run();
-		evaluator.dispose();
-	}
-
 	protected CSVWriter extractionWriter;
 
-	public PCExtractor(String configPath, String configName) throws Exception {
-		super(configPath, configName);
+	@Override
+	public String getId() {
+		return "eval-pc-extractor";
 	}
-
+	
 	@Override
 	protected void addCSVWriters() {
 		super.addCSVWriters();
@@ -56,9 +46,7 @@ public class PCExtractor extends Evaluator {
 	}
 
 	@Override
-	public void run() {
-		super.run();
-
+	public void evaluate() {
 		tabFormatter.setTabLevel(0);
 		if (config.systemIterations.getValue() > 0) {
 			Logger.logInfo("Start");

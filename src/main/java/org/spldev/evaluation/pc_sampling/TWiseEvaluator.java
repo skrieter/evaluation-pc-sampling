@@ -59,17 +59,6 @@ import org.spldev.util.logging.Logger;
 
 public class TWiseEvaluator extends Evaluator {
 
-	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
-			System.out.println("Configuration path and name not specified!");
-			return;
-		}
-		final TWiseEvaluator evaluator = new TWiseEvaluator(args[0], args[1]);
-		evaluator.init();
-		evaluator.run();
-		evaluator.dispose();
-	}
-
 	protected static final ListProperty<String> coverageT = new ListProperty<>("t", Property.StringConverter);
 	protected static final GroupingProperty coverageGrouping = new GroupingProperty("grouping");
 
@@ -83,8 +72,9 @@ public class TWiseEvaluator extends Evaluator {
 	private List<CoverageStatistic> coverageStatistics;
 	private String coverageCriterion;
 
-	public TWiseEvaluator(String configPath, String configName) throws Exception {
-		super(configPath, configName);
+	@Override
+	public String getId() {
+		return "eval-twise-evaluator";
 	}
 
 	@Override
@@ -97,9 +87,7 @@ public class TWiseEvaluator extends Evaluator {
 	protected final HashMap<String, PresenceConditionManager> expressionMap = new HashMap<>();
 
 	@Override
-	public void run() {
-		super.run();
-
+	public void evaluate() {
 		tabFormatter.setTabLevel(0);
 		if (config.systemIterations.getValue() > 0) {
 			Logger.logInfo("Start");

@@ -48,10 +48,6 @@ public abstract class AlgorithmEvaluator<R, A extends Algorithm<R>> extends Eval
 	protected CNF modelCNF;
 	protected CNF randomizedModelCNF;
 
-	public AlgorithmEvaluator(String configPath, String configName) throws Exception {
-		super(configPath, configName);
-	}
-
 	@Override
 	protected void addCSVWriters() {
 		super.addCSVWriters();
@@ -63,9 +59,7 @@ public abstract class AlgorithmEvaluator<R, A extends Algorithm<R>> extends Eval
 	}
 
 	@Override
-	public void run() {
-		super.run();
-
+	public void evaluate() {
 		tabFormatter.setTabLevel(0);
 		if (config.systemIterations.getValue() > 0) {
 			Logger.logInfo("Start");
