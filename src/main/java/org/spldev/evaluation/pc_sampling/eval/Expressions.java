@@ -33,10 +33,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.ClauseList;
-import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.configuration.twise.TWiseCombiner;
+import org.spldev.formula.analysis.sat4j.twise.TWiseCombiner;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.ClauseList;
+import org.spldev.formula.clauses.LiteralList;
 
 public final class Expressions implements Serializable {
 

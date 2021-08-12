@@ -29,7 +29,7 @@ import org.spldev.evaluation.Evaluator;
 import org.spldev.evaluation.process.Algorithm;
 import org.spldev.evaluation.process.ProcessRunner;
 import org.spldev.evaluation.process.Result;
-import org.spldev.formula.clause.CNF;
+import org.spldev.formula.clauses.CNF;
 import org.spldev.util.io.csv.CSVWriter;
 import org.spldev.util.logging.Logger;
 
@@ -76,7 +76,7 @@ public abstract class AlgorithmEvaluator<R, A extends Algorithm<R>> extends Eval
 
 			final int systemIndexEnd = config.systemNames.size();
 
-			systemLoop: for (systemID = 0; systemID < systemIndexEnd; systemID++) {
+			systemLoop: for (systemIndex = 0; systemIndex < systemIndexEnd; systemIndex++) {
 				logSystem();
 				tabFormatter.setTabLevel(2);
 				try {
@@ -140,8 +140,8 @@ public abstract class AlgorithmEvaluator<R, A extends Algorithm<R>> extends Eval
 	}
 
 	protected void writeModel(CSVWriter modelCSVWriter) {
-		modelCSVWriter.addValue(config.systemIDs.get(systemID));
-		modelCSVWriter.addValue(config.systemNames.get(systemID));
+		modelCSVWriter.addValue(config.systemIDs.get(systemIndex));
+		modelCSVWriter.addValue(config.systemNames.get(systemIndex));
 		modelCSVWriter.addValue(-1);
 		modelCSVWriter.addValue(modelCNF.getVariableMap().size());
 		modelCSVWriter.addValue(modelCNF.getClauses().size());
@@ -149,14 +149,14 @@ public abstract class AlgorithmEvaluator<R, A extends Algorithm<R>> extends Eval
 
 	protected void writeAlgorithm(CSVWriter algorithmCSVWriter) {
 		final Algorithm<?> algorithm = algorithmList.get(algorithmIndex);
-		algorithmCSVWriter.addValue(config.systemIDs.get(systemID));
+		algorithmCSVWriter.addValue(config.systemIDs.get(systemIndex));
 		algorithmCSVWriter.addValue(algorithmIndex);
 		algorithmCSVWriter.addValue(algorithm.getName());
 		algorithmCSVWriter.addValue(algorithm.getParameterSettings());
 	}
 
 	protected void writeData(CSVWriter dataCSVWriter) {
-		dataCSVWriter.addValue(config.systemIDs.get(systemID));
+		dataCSVWriter.addValue(config.systemIDs.get(systemIndex));
 		dataCSVWriter.addValue(algorithmIndex);
 		dataCSVWriter.addValue(systemIteration);
 		dataCSVWriter.addValue(algorithmIteration);
@@ -167,7 +167,7 @@ public abstract class AlgorithmEvaluator<R, A extends Algorithm<R>> extends Eval
 
 	private void logRun() {
 		final StringBuilder sb = new StringBuilder();
-		sb.append(systemID + 1);
+		sb.append(systemIndex + 1);
 		sb.append("/");
 		sb.append(config.systemNames.size());
 		sb.append(" | ");

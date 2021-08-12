@@ -53,17 +53,17 @@ import org.spldev.evaluation.process.Algorithm;
 import org.spldev.evaluation.properties.ListProperty;
 import org.spldev.evaluation.properties.Property;
 import org.spldev.evaluation.util.ModelReader;
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.ClauseList;
-import org.spldev.formula.clause.Clauses;
-import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.LiteralList.Order;
-import org.spldev.formula.clause.SolutionList;
-import org.spldev.formula.clause.analysis.CountSolutionsAnalysis;
-import org.spldev.formula.clause.io.DIMACSFormatCNF;
-import org.spldev.formula.clause.io.ExpressionGroupFormat;
+import org.spldev.formula.analysis.sat4j.CountSolutionsAnalysis;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.ClauseList;
+import org.spldev.formula.clauses.Clauses;
+import org.spldev.formula.clauses.LiteralList;
+import org.spldev.formula.clauses.LiteralList.Order;
+import org.spldev.formula.clauses.SolutionList;
 import org.spldev.formula.expression.Formula;
 import org.spldev.formula.expression.io.DIMACSFormat;
+import org.spldev.formula.io.DIMACSFormatCNF;
+import org.spldev.formula.io.ExpressionGroupFormat;
 import org.spldev.util.Result;
 import org.spldev.util.io.FileHandler;
 import org.spldev.util.io.csv.CSVWriter;
@@ -156,7 +156,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 				case "RND": {
 					final FIDERandom fideRandom = new FIDERandom(sampleFile, modelFile);
 					fideRandom.setIterations(randomIterationsProperty.getValue());
-					final String systemName = config.systemNames.get(systemID);
+					final String systemName = config.systemNames.get(systemIndex);
 					switch (systemName) {
 					case "axtls":
 						fideRandom.setLimit(50);
@@ -208,7 +208,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 	@Override
 	protected CNF prepareModel() throws Exception {
-		final String systemName = config.systemNames.get(systemID);
+		final String systemName = config.systemNames.get(systemIndex);
 
 		final ModelReader<Formula> fmReader = new ModelReader<>();
 		fmReader.setPathToFiles(config.modelPath);
@@ -224,11 +224,11 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 			}
 		});
 
-		curSampleDir = samplesDir.resolve(String.valueOf(config.systemIDs.get(systemID)));
+		curSampleDir = samplesDir.resolve(String.valueOf(config.systemIDs.get(systemIndex)));
 		Files.createDirectories(curSampleDir);
 		final DIMACSFormatCNF format = new DIMACSFormatCNF();
 		final Path fileName = curSampleDir.resolve("model." + format.getFileExtension());
-		FileHandler.serialize(modelCNF, fileName, format);
+		FileHandler.save(modelCNF, fileName, format);
 
 		return modelCNF;
 	}
@@ -238,7 +238,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 		final CNF randomCNF = modelCNF.randomize(new Random(config.randomSeed.getValue() + systemIteration));
 		final DIMACSFormatCNF format = new DIMACSFormatCNF();
 		final Path fileName = config.tempPath.resolve("model" + "." + format.getFileExtension());
-		FileHandler.serialize(randomCNF, fileName, format);
+		FileHandler.save(randomCNF, fileName, format);
 
 		for (final String groupingValue : grouping.getValue()) {
 			try {
@@ -268,7 +268,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 	}
 
 	private void saveExpressions(final CNF cnf, final CNF randomCNF, String group) throws IOException {
-		final Expressions readExpressions = readExpressions(config.systemNames.get(systemID), group);
+		final Expressions readExpressions = readExpressions(config.systemNames.get(systemIndex), group);
 		if (readExpressions != null) {
 			final List<List<ClauseList>> expressionGroups = adaptConditions(cnf, randomCNF,
 					readExpressions.getExpressions());
@@ -276,7 +276,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 			final ExpressionGroupFormat format = new ExpressionGroupFormat();
 			final Path fileName = config.tempPath.resolve("expressions_" + group + "." + format.getFileExtension());
-			FileHandler.serialize(expressionGroups, fileName, format);
+			FileHandler.save(expressionGroups, fileName, format);
 		}
 	}
 
@@ -293,17 +293,17 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 	@Override
 	protected void writeModel(CSVWriter modelCSVWriter) {
-		modelCSVWriter.addValue(config.systemIDs.get(systemID));
-		modelCSVWriter.addValue(config.systemNames.get(systemID));
+		modelCSVWriter.addValue(config.systemIDs.get(systemIndex));
+		modelCSVWriter.addValue(config.systemNames.get(systemIndex));
 
-		final String systemName = config.systemNames.get(systemID);
+		final String systemName = config.systemNames.get(systemIndex);
 		try {
 			final PresenceConditionList pcfmList = PresenceConditionList.readPCList(systemName,
 					Constants.convertedPCFMFileName);
 			final CNF formula = pcfmList.getFormula();
 			final CountSolutionsAnalysis countAnalysis = new CountSolutionsAnalysis();
 			countAnalysis.setTimeout(0);
-			modelCSVWriter.addValue(Executor.run(countAnalysis, formula).get());
+			modelCSVWriter.addValue(Executor.run(countAnalysis::execute, formula).get());
 			modelCSVWriter.addValue(formula.getVariableMap().size());
 			modelCSVWriter.addValue(formula.getClauses().size());
 			modelCSVWriter.addValue(pcfmList.size());
@@ -351,7 +351,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 		}
 		dataCSVWriter.addValue(configurationList.getSolutions().size());
 
-		writeSamples(config.systemIDs.get(systemID) + "_" + systemIteration + "_" + algorithmIndex + "_"
+		writeSamples(config.systemIDs.get(systemIndex) + "_" + systemIteration + "_" + algorithmIndex + "_"
 				+ algorithmIteration, configurationList.getSolutions());
 
 		if (Objects.equals("YASA", algorithmList.get(algorithmIndex).getName())) {

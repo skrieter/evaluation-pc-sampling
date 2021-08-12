@@ -29,13 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spldev.evaluation.process.Algorithm;
-import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.LiteralList.Order;
+import org.spldev.formula.clauses.LiteralList;
+import org.spldev.formula.clauses.LiteralList.Order;
+import org.spldev.formula.clauses.SolutionList;
 import org.spldev.formula.expression.atomic.literal.VariableMap;
-import org.spldev.formula.clause.SolutionList;
 import org.spldev.util.logging.Logger;
 
-public abstract class ASPLCATSampling extends Algorithm<org.spldev.formula.clause.SolutionList> {
+public abstract class ASPLCATSampling extends Algorithm<org.spldev.formula.clauses.SolutionList> {
 
 	private final Path outputFile;
 	private final Path fmFile;
@@ -105,7 +105,7 @@ public abstract class ASPLCATSampling extends Algorithm<org.spldev.formula.claus
 			final String featureName = line.substring(0, line.indexOf(";"));
 			featureNames.add(featureName);
 		}
-		final VariableMap variables = new VariableMap(featureNames);
+		final VariableMap variables = VariableMap.fromNames(featureNames);
 
 		final List<int[]> configurationList = new ArrayList<>(numberOfConfigurations);
 		for (int i = 0; i < numberOfConfigurations; i++) {

@@ -33,9 +33,9 @@ import org.spldev.evaluation.pc_sampling.eval.Expressions;
 import org.spldev.evaluation.pc_sampling.eval.Grouper;
 import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
 import org.spldev.evaluation.util.ModelReader;
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.ClauseList;
-import org.spldev.formula.clause.Clauses;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.ClauseList;
+import org.spldev.formula.clauses.Clauses;
 import org.spldev.formula.expression.Formula;
 import org.spldev.formula.expression.io.DIMACSFormat;
 import org.spldev.util.Result;
@@ -79,10 +79,10 @@ public class PCGrouper extends Evaluator {
 			tabFormatter.incTabLevel();
 
 			final int systemIndexEnd = config.systemNames.size();
-			for (systemID = 0; systemID < systemIndexEnd; systemID++) {
+			for (systemIndex = 0; systemIndex < systemIndexEnd; systemIndex++) {
 				logSystem();
 				tabFormatter.incTabLevel();
-				final String systemName = config.systemNames.get(systemID);
+				final String systemName = config.systemNames.get(systemIndex);
 
 				final ModelReader<Formula> fmReader = new ModelReader<>();
 				fmReader.setPathToFiles(config.modelPath);
@@ -127,7 +127,7 @@ public class PCGrouper extends Evaluator {
 		for (int i = 0; i < config.systemIterations.getValue(); i++) {
 			groupingWriter.createNewLine();
 			try {
-				groupingWriter.addValue(config.systemIDs.get(systemID));
+				groupingWriter.addValue(config.systemIDs.get(systemIndex));
 				groupingWriter.addValue(groupingValue);
 				groupingWriter.addValue(i);
 
@@ -161,7 +161,7 @@ public class PCGrouper extends Evaluator {
 		}
 
 		if (expressions != null) {
-			Expressions.writeConditions(expressions, config.systemNames.get(systemID),
+			Expressions.writeConditions(expressions, config.systemNames.get(systemIndex),
 					Constants.groupedPCFileName + groupingValue);
 			Logger.logInfo(Constants.groupedPCFileName + groupingValue + " OK");
 		} else {

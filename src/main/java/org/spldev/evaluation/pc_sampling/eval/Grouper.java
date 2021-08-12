@@ -38,10 +38,10 @@ import java.util.stream.Stream;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceCondition;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceConditionList;
 import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.ClauseList;
-import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.configuration.twise.TWiseCombiner;
+import org.spldev.formula.analysis.sat4j.twise.TWiseCombiner;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.ClauseList;
+import org.spldev.formula.clauses.LiteralList;
 import org.spldev.formula.expression.atomic.literal.VariableMap;
 
 public class Grouper {

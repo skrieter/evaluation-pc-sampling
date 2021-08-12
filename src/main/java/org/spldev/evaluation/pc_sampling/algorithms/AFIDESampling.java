@@ -27,8 +27,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.spldev.evaluation.process.Algorithm;
-import org.spldev.formula.clause.SolutionList;
-import org.spldev.formula.clause.io.ConfigurationListFormat;
+import org.spldev.formula.clauses.SolutionList;
+import org.spldev.formula.io.ConfigurationListFormat;
 import org.spldev.util.Result;
 import org.spldev.util.io.FileHandler;
 import org.spldev.util.logging.Logger;
@@ -73,7 +73,7 @@ public abstract class AFIDESampling extends Algorithm<SolutionList> {
 
 	@Override
 	public SolutionList parseResults() throws IOException {
-		final Result<SolutionList> parse = FileHandler.parse(outputFile, new ConfigurationListFormat());
+		final Result<SolutionList> parse = FileHandler.load(outputFile, new ConfigurationListFormat());
 		if (parse.isEmpty()) {
 			Logger.logProblems(parse.getProblems());
 			throw new IOException();

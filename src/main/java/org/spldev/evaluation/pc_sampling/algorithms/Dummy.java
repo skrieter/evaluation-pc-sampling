@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import org.spldev.evaluation.process.Algorithm;
-import org.spldev.formula.clause.SolutionList;
+import org.spldev.formula.clauses.SolutionList;
 
 public class Dummy extends Algorithm<SolutionList> {
 

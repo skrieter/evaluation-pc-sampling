@@ -33,13 +33,13 @@ import java.util.regex.Pattern;
 
 import org.spldev.evaluation.pc_sampling.TWiseSampler;
 import org.spldev.evaluation.process.Algorithm;
-import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.LiteralList.Order;
+import org.spldev.formula.clauses.LiteralList;
+import org.spldev.formula.clauses.LiteralList.Order;
+import org.spldev.formula.clauses.SolutionList;
 import org.spldev.formula.expression.atomic.literal.VariableMap;
-import org.spldev.formula.clause.SolutionList;
 import org.spldev.util.logging.Logger;
 
-public abstract class PLEDGE extends Algorithm<org.spldev.formula.clause.SolutionList> {
+public abstract class PLEDGE extends Algorithm<org.spldev.formula.clauses.SolutionList> {
 
 	private final Path outputFile;
 	private final Path fmFile;
@@ -129,7 +129,7 @@ public abstract class PLEDGE extends Algorithm<org.spldev.formula.clause.Solutio
 				break;
 			}
 		}
-		final VariableMap variables = new VariableMap(featureNames);
+		final VariableMap variables = VariableMap.fromNames(featureNames);
 
 		final ArrayList<LiteralList> configurationList = new ArrayList<>();
 		while (it.hasNext()) {

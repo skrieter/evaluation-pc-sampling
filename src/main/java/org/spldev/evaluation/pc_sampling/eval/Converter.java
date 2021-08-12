@@ -38,11 +38,11 @@ import java.util.stream.Stream;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.FileProvider;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceCondition;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceConditionList;
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.ClauseList;
-import org.spldev.formula.clause.Clauses;
-import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.LiteralList.Order;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.ClauseList;
+import org.spldev.formula.clauses.Clauses;
+import org.spldev.formula.clauses.LiteralList;
+import org.spldev.formula.clauses.LiteralList.Order;
 import org.spldev.formula.expression.Expression;
 import org.spldev.formula.expression.Formula;
 import org.spldev.formula.expression.Formulas;
@@ -55,6 +55,7 @@ import org.spldev.formula.expression.io.parse.NodeReader;
 import org.spldev.formula.expression.io.parse.NodeReader.ErrorHandling;
 import org.spldev.formula.expression.io.parse.Symbols;
 import org.spldev.formula.expression.io.parse.Symbols.Operator;
+import org.spldev.formula.expression.term.Variable;
 import org.spldev.util.logging.Logger;
 import org.spldev.util.tree.Trees;
 
@@ -127,14 +128,16 @@ public class Converter {
 								if (formula == null) {
 									return null;
 								} else {
-									pcNames.addAll(Formulas.getVariables(formula));
+									Formulas.getVariableStream(formula) //
+											.map(Variable::getName) //
+											.forEach(pcNames::add);
 									return new TempPC(expr, formula, sourceFilePath);
 								}
 							}).filter(Objects::nonNull) //
 					;
 				}).collect(Collectors.toList());
 
-		final CNF modelFormula = fmFormula != null ? fmFormula : new CNF(new VariableMap(pcNames));
+		final CNF modelFormula = fmFormula != null ? fmFormula : new CNF(VariableMap.fromNames(pcNames));
 
 		final HashMap<String, PresenceCondition> pcMap = new HashMap<>();
 		final int pcCount = pcFormulas.size();

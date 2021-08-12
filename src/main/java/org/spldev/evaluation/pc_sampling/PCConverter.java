@@ -31,9 +31,9 @@ import org.spldev.evaluation.pc_sampling.eval.Converter;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceCondition;
 import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceConditionList;
 import org.spldev.evaluation.util.ModelReader;
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.Clauses;
-import org.spldev.formula.clause.LiteralList;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.Clauses;
+import org.spldev.formula.clauses.LiteralList;
 import org.spldev.formula.expression.Formula;
 import org.spldev.formula.expression.io.DIMACSFormat;
 import org.spldev.util.Result;
@@ -76,10 +76,10 @@ public class PCConverter extends Evaluator {
 			Logger.logInfo("Start");
 			tabFormatter.incTabLevel();
 			final int systemIndexEnd = config.systemNames.size();
-			for (systemID = 0; systemID < systemIndexEnd; systemID++) {
+			for (systemIndex = 0; systemIndex < systemIndexEnd; systemIndex++) {
 				logSystem();
 				tabFormatter.incTabLevel();
-				final String systemName = config.systemNames.get(systemID);
+				final String systemName = config.systemNames.get(systemIndex);
 
 				final ModelReader<Formula> fmReader = new ModelReader<>();
 				fmReader.setPathToFiles(config.modelPath);
@@ -116,7 +116,7 @@ public class PCConverter extends Evaluator {
 		for (int i = 0; i < config.systemIterations.getValue(); i++) {
 			conversionWriter.createNewLine();
 			try {
-				conversionWriter.addValue(config.systemIDs.get(systemID));
+				conversionWriter.addValue(config.systemIDs.get(systemIndex));
 				conversionWriter.addValue(fileName);
 				conversionWriter.addValue(i);
 
@@ -166,7 +166,7 @@ public class PCConverter extends Evaluator {
 		}
 
 		if (pcList != null) {
-			PresenceConditionList.writePCList(pcList, config.systemNames.get(systemID), fileName);
+			PresenceConditionList.writePCList(pcList, config.systemNames.get(systemIndex), fileName);
 		}
 		return pcList;
 	}

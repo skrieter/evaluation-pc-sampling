@@ -65,10 +65,10 @@ public class PCExtractor extends Evaluator {
 			tabFormatter.incTabLevel();
 
 			final int systemIndexEnd = config.systemNames.size();
-			for (systemID = 0; systemID < systemIndexEnd; systemID++) {
+			for (systemIndex = 0; systemIndex < systemIndexEnd; systemIndex++) {
 				logSystem();
 				tabFormatter.incTabLevel();
-				final String systemName = config.systemNames.get(systemID);
+				final String systemName = config.systemNames.get(systemIndex);
 
 				// Extract PCs
 				try {
@@ -90,7 +90,7 @@ public class PCExtractor extends Evaluator {
 		for (int i = 0; i < config.systemIterations.getValue(); i++) {
 			extractionWriter.createNewLine();
 			try {
-				extractionWriter.addValue(config.systemIDs.get(systemID));
+				extractionWriter.addValue(config.systemIDs.get(systemIndex));
 				extractionWriter.addValue("extract");
 				extractionWriter.addValue(i);
 

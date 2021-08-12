@@ -30,12 +30,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.spldev.evaluation.pc_sampling.eval.Constants;
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.ClauseList;
-import org.spldev.formula.clause.Clauses;
-import org.spldev.formula.clause.LiteralList;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.ClauseList;
+import org.spldev.formula.clauses.Clauses;
+import org.spldev.formula.clauses.LiteralList;
 import org.spldev.formula.expression.atomic.literal.VariableMap;
 import org.spldev.formula.expression.io.DimacsReader;
+import org.spldev.formula.expression.term.Variable;
 
 public class KconfigDimacsReader {
 
@@ -62,7 +63,7 @@ public class KconfigDimacsReader {
 		final CNF slicedCNF = Clauses.slice(cnf, dirtyVariables);
 
 		final VariableMap slicedVariables = slicedCNF.getVariableMap();
-		final VariableMap newVariables = new VariableMap(featureNames);
+		final VariableMap newVariables = VariableMap.fromNames(featureNames);
 		final ClauseList newClauseList = new ClauseList();
 
 		for (final LiteralList clause : slicedCNF.getClauses()) {
@@ -70,7 +71,8 @@ public class KconfigDimacsReader {
 			final int[] newLiterals = new int[oldLiterals.length];
 			for (int i = 0; i < oldLiterals.length; i++) {
 				final int literal = oldLiterals[i];
-				final int var = newVariables.getVariable("CONFIG_" + slicedVariables.getName(literal)).get();
+				final int var = newVariables.getVariable("CONFIG_" + slicedVariables.getName(literal))
+						.map(Variable::getIndex).get();
 				newLiterals[i] = literal > 0 ? var : -var;
 			}
 			newClauseList.add(new LiteralList(newLiterals));

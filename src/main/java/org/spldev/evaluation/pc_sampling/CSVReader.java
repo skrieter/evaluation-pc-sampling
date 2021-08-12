@@ -36,12 +36,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.spldev.evaluation.Evaluator;
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.ClauseList;
-import org.spldev.formula.clause.Clauses;
-import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.LiteralList.Order;
-import org.spldev.formula.clause.configuration.twise.PresenceConditionManager;
+import org.spldev.formula.analysis.sat4j.twise.PresenceConditionManager;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.ClauseList;
+import org.spldev.formula.clauses.Clauses;
+import org.spldev.formula.clauses.LiteralList;
+import org.spldev.formula.clauses.LiteralList.Order;
 import org.spldev.formula.expression.Expression;
 import org.spldev.formula.expression.Formula;
 import org.spldev.formula.expression.Formulas;
@@ -167,20 +167,20 @@ public class CSVReader extends Evaluator {
 	private void readSamples(Path sampleDir) {
 		tabFormatter.setTabLevel(1);
 		try {
-			systemID = Integer.parseInt(sampleDir.getFileName().toString());
+			systemIndex = Integer.parseInt(sampleDir.getFileName().toString());
 		} catch (final Exception e) {
 			Logger.logError(e);
 			return;
 		}
 
-		final String systemName = config.systemNames.get(config.systemIDs.indexOf(systemID));
-		Logger.logInfo("System " + (systemID + 1) + ": " + systemName);
+		final String systemName = config.systemNames.get(config.systemIDs.indexOf(systemIndex));
+		Logger.logInfo("System " + (systemIndex + 1) + ": " + systemName);
 		Logger.logInfo("Preparing...");
 		tabFormatter.incTabLevel();
 
 		final DIMACSFormat format = new DIMACSFormat();
 		final Path modelFile = sampleDir.resolve("model." + format.getFileExtension());
-		final Result<CNF> parseResult = FileHandler.parse(modelFile, format).map(Clauses::convertToCNF);
+		final Result<CNF> parseResult = FileHandler.load(modelFile, format).map(Clauses::convertToCNF);
 		if (parseResult.isEmpty()) {
 			Logger.logProblems(parseResult.getProblems());
 			return;
@@ -241,7 +241,7 @@ public class CSVReader extends Evaluator {
 				for (final List<? extends LiteralList> sample : samples) {
 					final int[] args = sampleArguments.get(i++);
 					evaluationWriter.createNewLine();
-					evaluationWriter.addValue(systemID);
+					evaluationWriter.addValue(systemIndex);
 					evaluationWriter.addValue(systemName);
 					evaluationWriter.addValue(args[0]);
 					evaluationWriter.addValue(args[1]);

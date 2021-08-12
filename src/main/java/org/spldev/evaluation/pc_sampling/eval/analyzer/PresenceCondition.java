@@ -30,9 +30,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
 
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.LiteralList.Order;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.LiteralList;
+import org.spldev.formula.clauses.LiteralList.Order;
 
 public class PresenceCondition implements Serializable {
 

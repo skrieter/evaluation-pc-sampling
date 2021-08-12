@@ -39,19 +39,19 @@ import org.spldev.evaluation.pc_sampling.eval.Expressions;
 import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
 import org.spldev.evaluation.properties.ListProperty;
 import org.spldev.evaluation.properties.Property;
-import org.spldev.formula.clause.CNF;
-import org.spldev.formula.clause.Clauses;
-import org.spldev.formula.clause.LiteralList;
-import org.spldev.formula.clause.LiteralList.Order;
-import org.spldev.formula.clause.configuration.twise.CoverageStatistic;
-import org.spldev.formula.clause.configuration.twise.PresenceCondition;
-import org.spldev.formula.clause.configuration.twise.PresenceConditionManager;
-import org.spldev.formula.clause.configuration.twise.TWiseConfigurationUtil;
-import org.spldev.formula.clause.configuration.twise.TWiseStatisticGenerator;
-import org.spldev.formula.clause.configuration.twise.TWiseStatisticGenerator.ConfigurationScore;
-import org.spldev.formula.clause.configuration.twise.ValidityStatistic;
-import org.spldev.formula.clause.solver.Sat4JSolver;
+import org.spldev.formula.analysis.sat4j.twise.CoverageStatistic;
+import org.spldev.formula.analysis.sat4j.twise.PresenceCondition;
+import org.spldev.formula.analysis.sat4j.twise.PresenceConditionManager;
+import org.spldev.formula.analysis.sat4j.twise.TWiseConfigurationUtil;
+import org.spldev.formula.analysis.sat4j.twise.TWiseStatisticGenerator;
+import org.spldev.formula.analysis.sat4j.twise.TWiseStatisticGenerator.ConfigurationScore;
+import org.spldev.formula.analysis.sat4j.twise.ValidityStatistic;
+import org.spldev.formula.clauses.CNF;
+import org.spldev.formula.clauses.Clauses;
+import org.spldev.formula.clauses.LiteralList;
+import org.spldev.formula.clauses.LiteralList.Order;
 import org.spldev.formula.expression.io.DIMACSFormat;
+import org.spldev.formula.solver.sat4j.Sat4JSolver;
 import org.spldev.util.Result;
 import org.spldev.util.io.FileHandler;
 import org.spldev.util.io.csv.CSVWriter;
@@ -126,19 +126,19 @@ public class TWiseEvaluator extends Evaluator {
 
 	private void readSamples(Path sampleDir) {
 		try {
-			systemID = Integer.parseInt(sampleDir.getFileName().toString());
+			systemIndex = Integer.parseInt(sampleDir.getFileName().toString());
 		} catch (final Exception e) {
 			Logger.logError(e);
 			return;
 		}
 
-		Logger.logInfo("System " + (systemID + 1));
+		Logger.logInfo("System " + (systemIndex + 1));
 		Logger.logInfo("Preparing...");
 		tabFormatter.incTabLevel();
 
 		final DIMACSFormat format = new DIMACSFormat();
 		final Path modelFile = sampleDir.resolve("model." + format.getFileExtension());
-		final Result<CNF> parseResult = FileHandler.parse(modelFile, format).map(Clauses::convertToCNF);
+		final Result<CNF> parseResult = FileHandler.load(modelFile, format).map(Clauses::convertToCNF);
 //		if (parseResult.isEmpty()) {
 //			Logger.logProblems(parseResult.getProblems());
 //			return;
@@ -249,7 +249,7 @@ public class TWiseEvaluator extends Evaluator {
 	private PresenceConditionManager readExpressions(String group, TWiseConfigurationUtil util) {
 		try {
 			final Expressions exp = Expressions.readConditions(
-					config.systemNames.get(config.systemIDs.indexOf(systemID)), Constants.groupedPCFileName + group);
+					config.systemNames.get(config.systemIDs.indexOf(systemIndex)), Constants.groupedPCFileName + group);
 			return new PresenceConditionManager(util, exp.getExpressions());
 		} catch (final IOException e) {
 			return null;
@@ -269,7 +269,7 @@ public class TWiseEvaluator extends Evaluator {
 	private void writeValidity(CSVWriter csvWriter, int i) {
 		final int[] argumentValues = sampleArguments.get(i);
 		final ValidityStatistic validityStatistic = sampleValidityStatistics.get(i);
-		csvWriter.addValue(systemID);
+		csvWriter.addValue(systemIndex);
 		csvWriter.addValue(argumentValues[1]);
 		csvWriter.addValue(argumentValues[0]);
 		csvWriter.addValue(argumentValues[2]);
@@ -281,7 +281,7 @@ public class TWiseEvaluator extends Evaluator {
 	private void writeCoverage(CSVWriter csvWriter, int i) {
 		final int[] argumentValues = sampleArguments.get(i);
 		final CoverageStatistic coverageStatistic = coverageStatistics.get(i);
-		csvWriter.addValue(systemID);
+		csvWriter.addValue(systemIndex);
 		csvWriter.addValue(argumentValues[1]);
 		csvWriter.addValue(argumentValues[0]);
 		csvWriter.addValue(argumentValues[2]);

@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spldev.evaluation.pc_sampling.eval.Constants;
-import org.spldev.formula.clause.CNF;
+import org.spldev.formula.clauses.CNF;
 
 public class PresenceConditionList extends ArrayList<PresenceCondition> implements Serializable {
 
