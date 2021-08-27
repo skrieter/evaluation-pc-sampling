@@ -20,29 +20,16 @@
  * See <https://github.com/skrieter/evaluation-pc-sampling> for further information.
  * -----------------------------------------------------------------------------
  */
-package org.spldev.evaluation.pc_sampling.eval.properties;
+package org.spldev.evaluation.pc_sampling.properties;
 
-import org.spldev.evaluation.properties.ListProperty;
+import org.spldev.evaluation.properties.*;
 
-public class GroupingProperty extends ListProperty<String> {
+public class AlgorithmProperty extends ListProperty<String> {
 
-	public static final String PC_ALL_FM = "pc_all_fm";
-	public static final String PC_ALL_FM_FM = "pc_all_fm_fm";
-	public static final String PC_FOLDER_FM = "pc_folder_fm";
-	public static final String PC_FILE_FM = "pc_file_fm";
-	public static final String PC_VARS_FM = "pc_vars_fm";
-	public static final String PC_ALL = "pc_all";
-	public static final String PC_FOLDER = "pc_folder";
-	public static final String PC_FILE = "pc_file";
-	public static final String PC_VARS = "pc_vars";
-	public static final String FM_ONLY = "fm_only";
+	public static final String PRESENCE_CONDITION = "PC";
 
-	public GroupingProperty() {
-		super("grouping", StringConverter);
-	}
-
-	public GroupingProperty(String alternateName) {
-		super(alternateName, StringConverter);
+	public AlgorithmProperty() {
+		super("algorithm", StringConverter);
 	}
 
 }

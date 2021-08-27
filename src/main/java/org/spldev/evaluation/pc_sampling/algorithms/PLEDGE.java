@@ -22,22 +22,17 @@
  */
 package org.spldev.evaluation.pc_sampling.algorithms;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.regex.*;
 
-import org.spldev.evaluation.pc_sampling.TWiseSampler;
-import org.spldev.evaluation.process.Algorithm;
-import org.spldev.formula.clauses.LiteralList;
-import org.spldev.formula.clauses.LiteralList.Order;
-import org.spldev.formula.clauses.SolutionList;
-import org.spldev.formula.expression.atomic.literal.VariableMap;
-import org.spldev.util.logging.Logger;
+import org.spldev.evaluation.pc_sampling.*;
+import org.spldev.evaluation.process.*;
+import org.spldev.formula.clauses.*;
+import org.spldev.formula.clauses.LiteralList.*;
+import org.spldev.formula.expression.atomic.literal.*;
+import org.spldev.util.logging.*;
 
 public abstract class PLEDGE extends Algorithm<org.spldev.formula.clauses.SolutionList> {
 

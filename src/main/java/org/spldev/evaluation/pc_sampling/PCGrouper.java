@@ -22,26 +22,23 @@
  */
 package org.spldev.evaluation.pc_sampling;
 
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
-import org.spldev.evaluation.Evaluator;
-import org.spldev.evaluation.pc_sampling.eval.Constants;
-import org.spldev.evaluation.pc_sampling.eval.Expressions;
-import org.spldev.evaluation.pc_sampling.eval.Grouper;
-import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
-import org.spldev.evaluation.util.ModelReader;
-import org.spldev.formula.clauses.CNF;
-import org.spldev.formula.clauses.ClauseList;
-import org.spldev.formula.clauses.Clauses;
-import org.spldev.formula.expression.Formula;
-import org.spldev.formula.expression.io.DIMACSFormat;
-import org.spldev.util.Result;
-import org.spldev.util.io.csv.CSVWriter;
-import org.spldev.util.io.format.FormatSupplier;
-import org.spldev.util.logging.Logger;
+import org.spldev.evaluation.*;
+import org.spldev.evaluation.util.*;
+import org.spldev.formula.clauses.*;
+import org.spldev.formula.expression.*;
+import org.spldev.formula.expression.io.*;
+import org.spldev.pc_extraction.convert.*;
+import org.spldev.pc_extraction.convert.Grouper.*;
+import org.spldev.util.*;
+import org.spldev.util.io.*;
+import org.spldev.util.io.binary.*;
+import org.spldev.util.io.csv.*;
+import org.spldev.util.io.format.*;
+import org.spldev.util.logging.*;
 
 public class PCGrouper extends Evaluator {
 
@@ -83,22 +80,18 @@ public class PCGrouper extends Evaluator {
 
 				try {
 					if (cnf != null) {
-						final Grouper pcfmProcessor = new Grouper(cnf, systemName);
-						evalGroup(GroupingProperty.FM_ONLY, pcfmProcessor);
-						evalGroup(GroupingProperty.PC_ALL_FM, pcfmProcessor);
-						evalGroup(GroupingProperty.PC_ALL_FM_FM, pcfmProcessor);
-						evalGroup(GroupingProperty.PC_FOLDER_FM, pcfmProcessor);
-						evalGroup(GroupingProperty.PC_FILE_FM, pcfmProcessor);
-						evalGroup(GroupingProperty.PC_VARS_FM, pcfmProcessor);
+						evalGroup(Grouping.FM_ONLY, cnf, systemName);
+						evalGroup(Grouping.PC_ALL_FM, cnf, systemName);
+						evalGroup(Grouping.PC_ALL_FM_FM, cnf, systemName);
+						evalGroup(Grouping.PC_FOLDER_FM, cnf, systemName);
+						evalGroup(Grouping.PC_FILE_FM, cnf, systemName);
+						evalGroup(Grouping.PC_VARS_FM, cnf, systemName);
 					}
-
-					final Grouper pcProcessor = new Grouper(null, systemName);
-					evalGroup(GroupingProperty.PC_ALL, pcProcessor);
-					evalGroup(GroupingProperty.PC_FOLDER, pcProcessor);
-					evalGroup(GroupingProperty.PC_FILE, pcProcessor);
-					evalGroup(GroupingProperty.PC_VARS, pcProcessor);
+					evalGroup(Grouping.PC_ALL, null, systemName);
+					evalGroup(Grouping.PC_FOLDER, null, systemName);
+					evalGroup(Grouping.PC_FILE, null, systemName);
+					evalGroup(Grouping.PC_VARS, null, systemName);
 				} catch (final Exception e) {
-					e.printStackTrace();
 					Logger.logError(e);
 				}
 				tabFormatter.decTabLevel();
@@ -110,8 +103,11 @@ public class PCGrouper extends Evaluator {
 		}
 	}
 
-	private Expressions evalGroup(String groupingValue, final Grouper pcProcessor) {
+	private Expressions evalGroup(Grouping groupingValue, CNF cnf, String systemName) throws Exception {
 		Expressions expressions = null;
+		final PresenceConditionList pcList = TWiseEvaluator
+				.readPCList(cnf == null ? Constants.convertedPCFileName : Constants.convertedPCFMFileName, systemName);
+		final Grouper grouper = new Grouper();
 		for (int i = 0; i < config.systemIterations.getValue(); i++) {
 			groupingWriter.createNewLine();
 			try {
@@ -120,7 +116,7 @@ public class PCGrouper extends Evaluator {
 				groupingWriter.addValue(i);
 
 				final long localTime = System.nanoTime();
-				expressions = pcProcessor.group(groupingValue);
+				expressions = grouper.group(pcList, groupingValue);
 				final long timeNeeded = System.nanoTime() - localTime;
 
 				groupingWriter.addValue(timeNeeded);
@@ -149,8 +145,10 @@ public class PCGrouper extends Evaluator {
 		}
 
 		if (expressions != null) {
-			Expressions.writeConditions(expressions, config.systemNames.get(systemIndex),
-					Constants.groupedPCFileName + groupingValue);
+			final SerializableObjectFormat<Expressions> format = new SerializableObjectFormat<>();
+			final Path expFile = Constants.expressionsOutput.resolve(config.systemNames.get(systemIndex))
+					.resolve(Constants.groupedPCFileName + groupingValue + "." + format.getFileExtension());
+			FileHandler.save(expressions, expFile, format);
 			Logger.logInfo(Constants.groupedPCFileName + groupingValue + " OK");
 		} else {
 			Logger.logInfo(Constants.groupedPCFileName + groupingValue + " FAIL");

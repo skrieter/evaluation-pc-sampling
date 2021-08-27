@@ -22,54 +22,29 @@
  */
 package org.spldev.evaluation.pc_sampling;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
 
-import org.spldev.evaluation.pc_sampling.algorithms.Chvatal;
-import org.spldev.evaluation.pc_sampling.algorithms.Dummy;
-import org.spldev.evaluation.pc_sampling.algorithms.FIDEChvatal;
-import org.spldev.evaluation.pc_sampling.algorithms.FIDEICPL;
-import org.spldev.evaluation.pc_sampling.algorithms.FIDERandom;
-import org.spldev.evaluation.pc_sampling.algorithms.ICPL;
-import org.spldev.evaluation.pc_sampling.algorithms.IncLing;
-import org.spldev.evaluation.pc_sampling.algorithms.PLEDGE_MAX;
-import org.spldev.evaluation.pc_sampling.algorithms.PLEDGE_MIN;
-import org.spldev.evaluation.pc_sampling.algorithms.YASA;
-import org.spldev.evaluation.pc_sampling.eval.Constants;
-import org.spldev.evaluation.pc_sampling.eval.Expressions;
-import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceConditionList;
-import org.spldev.evaluation.pc_sampling.eval.properties.AlgorithmProperty;
-import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
-import org.spldev.evaluation.process.Algorithm;
-import org.spldev.evaluation.properties.ListProperty;
-import org.spldev.evaluation.properties.Property;
-import org.spldev.evaluation.util.ModelReader;
-import org.spldev.formula.analysis.sat4j.CountSolutionsAnalysis;
-import org.spldev.formula.clauses.CNF;
-import org.spldev.formula.clauses.ClauseList;
-import org.spldev.formula.clauses.Clauses;
-import org.spldev.formula.clauses.LiteralList;
-import org.spldev.formula.clauses.LiteralList.Order;
-import org.spldev.formula.clauses.SolutionList;
-import org.spldev.formula.expression.Formula;
-import org.spldev.formula.expression.io.DIMACSFormat;
-import org.spldev.formula.io.DIMACSFormatCNF;
-import org.spldev.formula.io.ExpressionGroupFormat;
+import org.spldev.evaluation.pc_sampling.algorithms.*;
+import org.spldev.evaluation.pc_sampling.properties.*;
+import org.spldev.evaluation.process.*;
+import org.spldev.evaluation.properties.*;
+import org.spldev.evaluation.util.*;
+import org.spldev.formula.analysis.sat4j.*;
+import org.spldev.formula.clauses.*;
+import org.spldev.formula.clauses.LiteralList.*;
+import org.spldev.formula.expression.*;
+import org.spldev.formula.expression.io.*;
+import org.spldev.formula.io.*;
+import org.spldev.pc_extraction.convert.*;
 import org.spldev.util.Result;
-import org.spldev.util.io.FileHandler;
-import org.spldev.util.io.csv.CSVWriter;
-import org.spldev.util.io.format.FormatSupplier;
-import org.spldev.util.job.Executor;
-import org.spldev.util.logging.Logger;
+import org.spldev.util.io.*;
+import org.spldev.util.io.csv.*;
+import org.spldev.util.io.format.*;
+import org.spldev.util.job.*;
+import org.spldev.util.logging.*;
 
 public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<SolutionList>> {
 
@@ -207,8 +182,8 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 		final CNF modelCNF = fm.orElse(() -> {
 			try {
-				return PresenceConditionList.readPCList(systemName, Constants.convertedPCFileName).getFormula();
-			} catch (final IOException e) {
+				return TWiseEvaluator.readPCList(Constants.convertedPCFileName, systemName).getFormula();
+			} catch (final Exception e) {
 				Logger.logError(e);
 				return null;
 			}
@@ -288,8 +263,8 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 		final String systemName = config.systemNames.get(systemIndex);
 		try {
-			final PresenceConditionList pcfmList = PresenceConditionList.readPCList(systemName,
-					Constants.convertedPCFMFileName);
+			final PresenceConditionList pcfmList = TWiseEvaluator.readPCList(Constants.convertedPCFMFileName,
+					systemName);
 			final CNF formula = pcfmList.getFormula();
 			final CountSolutionsAnalysis countAnalysis = new CountSolutionsAnalysis();
 			countAnalysis.setTimeout(0);
@@ -298,8 +273,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 			modelCSVWriter.addValue(formula.getClauses().size());
 			modelCSVWriter.addValue(pcfmList.size());
 			modelCSVWriter.addValue(pcfmList.getPCNames().size());
-		} catch (final FileNotFoundException e) {
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			modelCSVWriter.addValue(0);
 			modelCSVWriter.addValue(-1);
 			modelCSVWriter.addValue(-1);
@@ -308,14 +282,12 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 		}
 
 		try {
-			final PresenceConditionList pcList = PresenceConditionList.readPCList(systemName,
-					Constants.convertedPCFileName);
+			final PresenceConditionList pcList = TWiseEvaluator.readPCList(Constants.convertedPCFileName, systemName);
 			final CNF formula = pcList.getFormula();
 			modelCSVWriter.addValue(formula.getVariableMap().size());
 			modelCSVWriter.addValue(formula.getClauses().size());
 			modelCSVWriter.addValue(pcList.size());
-		} catch (final FileNotFoundException e) {
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			modelCSVWriter.addValue(-1);
 			modelCSVWriter.addValue(-1);
 			modelCSVWriter.addValue(-1);
@@ -324,8 +296,8 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 	public Expressions readExpressions(String name, String grouping) {
 		try {
-			return Expressions.readConditions(name, Constants.groupedPCFileName + grouping);
-		} catch (final IOException e) {
+			return TWiseEvaluator.readExpressions(grouping, name);
+		} catch (final Exception e) {
 			Logger.logDebug(e.getMessage());
 			return null;
 		}

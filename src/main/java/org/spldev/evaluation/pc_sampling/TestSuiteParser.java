@@ -22,24 +22,16 @@
  */
 package org.spldev.evaluation.pc_sampling;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
 
-import org.spldev.formula.expression.Formula;
-import org.spldev.formula.expression.Formulas;
-import org.spldev.formula.expression.compound.Or;
-import org.spldev.formula.expression.io.parse.NodeReader;
-import org.spldev.formula.expression.io.parse.PropositionalModelSymbols;
+import org.spldev.formula.expression.*;
+import org.spldev.formula.expression.compound.*;
+import org.spldev.formula.expression.io.parse.*;
 
 public class TestSuiteParser {
 

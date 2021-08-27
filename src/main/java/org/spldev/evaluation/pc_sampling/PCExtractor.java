@@ -22,12 +22,13 @@
  */
 package org.spldev.evaluation.pc_sampling;
 
-import java.util.Arrays;
+import java.nio.file.*;
+import java.util.*;
 
-import org.spldev.evaluation.Evaluator;
-import org.spldev.evaluation.pc_sampling.eval.Extractor;
-import org.spldev.util.io.csv.CSVWriter;
-import org.spldev.util.logging.Logger;
+import org.spldev.evaluation.*;
+import org.spldev.pc_extraction.extraction.cpp.*;
+import org.spldev.util.io.csv.*;
+import org.spldev.util.logging.*;
 
 public class PCExtractor extends Evaluator {
 
@@ -37,7 +38,7 @@ public class PCExtractor extends Evaluator {
 	public String getId() {
 		return "eval-pc-extractor";
 	}
-	
+
 	@Override
 	protected void addCSVWriters() {
 		super.addCSVWriters();
@@ -56,12 +57,9 @@ public class PCExtractor extends Evaluator {
 			for (systemIndex = 0; systemIndex < systemIndexEnd; systemIndex++) {
 				logSystem();
 				tabFormatter.incTabLevel();
-				final String systemName = config.systemNames.get(systemIndex);
-
 				// Extract PCs
 				try {
-					final Extractor pcfmProcessor = new Extractor(systemName);
-					evalExtract(pcfmProcessor);
+					evalExtract();
 				} catch (final Exception e) {
 					Logger.logError(e);
 				}
@@ -74,7 +72,11 @@ public class PCExtractor extends Evaluator {
 		}
 	}
 
-	private void evalExtract(final Extractor pcProcessor) {
+	private void evalExtract() {
+		final CPPExtractor extractor = new CPPExtractor();
+		final String systemName = config.systemNames.get(systemIndex);
+		final Path extractionPath = Constants.expressionsOutput.resolve(systemName);
+		final Path systemPath = Constants.systems.resolve(systemName);
 		for (int i = 0; i < config.systemIterations.getValue(); i++) {
 			extractionWriter.createNewLine();
 			try {
@@ -83,7 +85,7 @@ public class PCExtractor extends Evaluator {
 				extractionWriter.addValue(i);
 
 				final long localTime = System.nanoTime();
-				final boolean extracted = pcProcessor.extract();
+				final boolean extracted = extractor.extract(systemPath, extractionPath);
 				final long timeNeeded = System.nanoTime() - localTime;
 
 				extractionWriter.addValue(timeNeeded);

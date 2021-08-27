@@ -22,24 +22,21 @@
  */
 package org.spldev.evaluation.pc_sampling;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.nio.file.*;
+import java.util.*;
 
-import org.spldev.evaluation.Evaluator;
-import org.spldev.evaluation.pc_sampling.eval.Constants;
-import org.spldev.evaluation.pc_sampling.eval.Converter;
-import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceCondition;
-import org.spldev.evaluation.pc_sampling.eval.analyzer.PresenceConditionList;
-import org.spldev.evaluation.util.ModelReader;
-import org.spldev.formula.clauses.CNF;
-import org.spldev.formula.clauses.Clauses;
-import org.spldev.formula.clauses.LiteralList;
-import org.spldev.formula.expression.Formula;
-import org.spldev.formula.expression.io.DIMACSFormat;
-import org.spldev.util.Result;
-import org.spldev.util.io.csv.CSVWriter;
-import org.spldev.util.io.format.FormatSupplier;
-import org.spldev.util.logging.Logger;
+import org.spldev.evaluation.*;
+import org.spldev.evaluation.util.*;
+import org.spldev.formula.clauses.*;
+import org.spldev.formula.expression.*;
+import org.spldev.formula.expression.io.*;
+import org.spldev.pc_extraction.convert.*;
+import org.spldev.util.*;
+import org.spldev.util.io.*;
+import org.spldev.util.io.binary.*;
+import org.spldev.util.io.csv.*;
+import org.spldev.util.io.format.*;
+import org.spldev.util.logging.*;
 
 public class PCConverter extends Evaluator {
 
@@ -82,11 +79,9 @@ public class PCConverter extends Evaluator {
 
 				try {
 					if (cnf != null) {
-						final Converter pcfmProcessor = new Converter(cnf, systemName);
-						evalConvert(pcfmProcessor, Constants.convertedPCFMFileName);
+						evalConvert(Constants.convertedPCFMFileName, cnf, systemName);
 					}
-					final Converter pcfmProcessor = new Converter(null, systemName);
-					evalConvert(pcfmProcessor, Constants.convertedPCFileName);
+					evalConvert(Constants.convertedPCFileName, null, systemName);
 				} catch (final Exception e) {
 					Logger.logError(e);
 				}
@@ -99,8 +94,10 @@ public class PCConverter extends Evaluator {
 		}
 	}
 
-	private PresenceConditionList evalConvert(final Converter pcProcessor, String fileName) {
+	private PresenceConditionList evalConvert(String fileName, CNF cnf, String systemName) throws Exception {
 		PresenceConditionList pcList = null;
+		final Converter pcProcessor = new Converter();
+		final Path extractionPath = Constants.expressionsOutput.resolve(systemName);
 		for (int i = 0; i < config.systemIterations.getValue(); i++) {
 			conversionWriter.createNewLine();
 			try {
@@ -109,7 +106,7 @@ public class PCConverter extends Evaluator {
 				conversionWriter.addValue(i);
 
 				final long localTime = System.nanoTime();
-				pcList = pcProcessor.convert();
+				pcList = pcProcessor.convert(cnf, extractionPath);
 				final long timeNeeded = System.nanoTime() - localTime;
 
 				conversionWriter.addValue(timeNeeded);
@@ -154,7 +151,10 @@ public class PCConverter extends Evaluator {
 		}
 
 		if (pcList != null) {
-			PresenceConditionList.writePCList(pcList, config.systemNames.get(systemIndex), fileName);
+			final SerializableObjectFormat<PresenceConditionList> format = new SerializableObjectFormat<>();
+			final Path pcListFile = Constants.expressionsOutput.resolve(config.systemNames.get(systemIndex))
+					.resolve(fileName + "." + format.getFileExtension());
+			FileHandler.save(pcList, pcListFile, format);
 		}
 		return pcList;
 	}

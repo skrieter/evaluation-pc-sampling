@@ -20,22 +20,19 @@
  * See <https://github.com/skrieter/evaluation-pc-sampling> for further information.
  * -----------------------------------------------------------------------------
  */
-package org.spldev.evaluation.pc_sampling.eval;
+package org.spldev.evaluation.pc_sampling;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.nio.file.*;
+import java.util.function.*;
 
 public class Constants {
 
 	public final static Path systems = Paths.get("resources/systems");
 
-	public final static Path kbuildOutput = Paths.get("gen/kbuild");
-	public final static Path expressionsOutput = Paths.get("gen/presenceConditions");
-	public final static Path presenceConditionListOutput = Paths.get("gen/presenceConditions");
-	public final static Path presenceConditionsOutput = Paths.get("gen/presenceConditions");
+	public final static Path output = Paths.get("gen");
+
+	public final static Path kbuildOutput = output.resolve("kbuild");
+	public final static Path expressionsOutput = output.resolve("presenceConditions");
 
 	public final static String convertedPCFileName = "pclist";
 	public final static String convertedPCFMFileName = "pclist_fm";

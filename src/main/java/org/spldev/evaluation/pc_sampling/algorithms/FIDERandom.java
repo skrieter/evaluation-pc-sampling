@@ -22,9 +22,9 @@
  */
 package org.spldev.evaluation.pc_sampling.algorithms;
 
-import java.nio.file.Path;
+import java.nio.file.*;
 
-import org.spldev.evaluation.pc_sampling.TWiseSampler;
+import org.spldev.evaluation.pc_sampling.*;
 
 public class FIDERandom extends AFIDESampling {
 

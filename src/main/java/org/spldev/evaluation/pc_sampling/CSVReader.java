@@ -22,43 +22,28 @@
  */
 package org.spldev.evaluation.pc_sampling;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
 
-import org.spldev.evaluation.Evaluator;
-import org.spldev.formula.analysis.sat4j.twise.PresenceConditionManager;
-import org.spldev.formula.clauses.CNF;
-import org.spldev.formula.clauses.ClauseList;
-import org.spldev.formula.clauses.Clauses;
-import org.spldev.formula.clauses.LiteralList;
-import org.spldev.formula.clauses.LiteralList.Order;
-import org.spldev.formula.expression.Expression;
-import org.spldev.formula.expression.Formula;
-import org.spldev.formula.expression.Formulas;
-import org.spldev.formula.expression.atomic.literal.Literal;
-import org.spldev.formula.expression.atomic.literal.VariableMap;
-import org.spldev.formula.expression.compound.And;
-import org.spldev.formula.expression.io.DIMACSFormat;
-import org.spldev.formula.expression.io.parse.NodeReader;
-import org.spldev.formula.expression.io.parse.NodeReader.ErrorHandling;
-import org.spldev.formula.expression.io.parse.Symbols;
-import org.spldev.formula.expression.io.parse.Symbols.Operator;
-import org.spldev.util.Result;
-import org.spldev.util.io.FileHandler;
-import org.spldev.util.io.csv.CSVWriter;
-import org.spldev.util.logging.Logger;
-import org.spldev.util.tree.Trees;
-import org.spldev.util.tree.visitor.TreePrinter;
+import org.spldev.evaluation.*;
+import org.spldev.formula.analysis.sat4j.twise.*;
+import org.spldev.formula.clauses.*;
+import org.spldev.formula.clauses.LiteralList.*;
+import org.spldev.formula.expression.*;
+import org.spldev.formula.expression.atomic.literal.*;
+import org.spldev.formula.expression.compound.*;
+import org.spldev.formula.expression.io.*;
+import org.spldev.formula.expression.io.parse.*;
+import org.spldev.formula.expression.io.parse.NodeReader.*;
+import org.spldev.formula.expression.io.parse.Symbols.*;
+import org.spldev.util.*;
+import org.spldev.util.io.*;
+import org.spldev.util.io.csv.*;
+import org.spldev.util.logging.*;
+import org.spldev.util.tree.*;
+import org.spldev.util.tree.visitor.*;
 
 public class CSVReader extends Evaluator {
 

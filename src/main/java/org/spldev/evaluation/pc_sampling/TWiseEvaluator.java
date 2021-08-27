@@ -22,40 +22,27 @@
  */
 package org.spldev.evaluation.pc_sampling;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
 
-import org.spldev.evaluation.Evaluator;
-import org.spldev.evaluation.pc_sampling.eval.Constants;
-import org.spldev.evaluation.pc_sampling.eval.Expressions;
-import org.spldev.evaluation.pc_sampling.eval.properties.GroupingProperty;
-import org.spldev.evaluation.properties.ListProperty;
-import org.spldev.evaluation.properties.Property;
-import org.spldev.formula.analysis.sat4j.twise.CoverageStatistic;
+import org.spldev.evaluation.*;
+import org.spldev.evaluation.pc_sampling.properties.*;
+import org.spldev.evaluation.properties.*;
+import org.spldev.formula.analysis.sat4j.twise.*;
 import org.spldev.formula.analysis.sat4j.twise.PresenceCondition;
-import org.spldev.formula.analysis.sat4j.twise.PresenceConditionManager;
-import org.spldev.formula.analysis.sat4j.twise.TWiseConfigurationUtil;
-import org.spldev.formula.analysis.sat4j.twise.TWiseStatisticGenerator;
-import org.spldev.formula.analysis.sat4j.twise.TWiseStatisticGenerator.ConfigurationScore;
-import org.spldev.formula.analysis.sat4j.twise.ValidityStatistic;
-import org.spldev.formula.clauses.CNF;
-import org.spldev.formula.clauses.Clauses;
-import org.spldev.formula.clauses.LiteralList;
-import org.spldev.formula.clauses.LiteralList.Order;
-import org.spldev.formula.expression.io.DIMACSFormat;
-import org.spldev.formula.solver.sat4j.Sat4JSolver;
-import org.spldev.util.Result;
-import org.spldev.util.io.FileHandler;
-import org.spldev.util.io.csv.CSVWriter;
-import org.spldev.util.logging.Logger;
+import org.spldev.formula.analysis.sat4j.twise.TWiseStatisticGenerator.*;
+import org.spldev.formula.clauses.*;
+import org.spldev.formula.clauses.LiteralList.*;
+import org.spldev.formula.expression.io.*;
+import org.spldev.formula.solver.sat4j.*;
+import org.spldev.pc_extraction.convert.*;
+import org.spldev.util.*;
+import org.spldev.util.io.*;
+import org.spldev.util.io.binary.*;
+import org.spldev.util.io.csv.*;
+import org.spldev.util.logging.*;
 
 public class TWiseEvaluator extends Evaluator {
 
@@ -236,12 +223,26 @@ public class TWiseEvaluator extends Evaluator {
 
 	private PresenceConditionManager readExpressions(String group, TWiseConfigurationUtil util) {
 		try {
-			final Expressions exp = Expressions.readConditions(
-					config.systemNames.get(config.systemIDs.indexOf(systemIndex)), Constants.groupedPCFileName + group);
-			return new PresenceConditionManager(util, exp.getExpressions());
-		} catch (final IOException e) {
+			return new PresenceConditionManager(util,
+					readExpressions(group, config.systemNames.get(systemIndex)).getExpressions());
+		} catch (final Exception e) {
+			Logger.logError(e);
 			return null;
 		}
+	}
+
+	public static PresenceConditionList readPCList(String name, String systemName) throws Exception {
+		final SerializableObjectFormat<PresenceConditionList> format = new SerializableObjectFormat<>();
+		final Path pcListFile = Constants.expressionsOutput.resolve(systemName)
+				.resolve(name + "." + format.getFileExtension());
+		return FileHandler.load(pcListFile, format).orElseThrow();
+	}
+
+	public static Expressions readExpressions(String group, String systemName) throws Exception {
+		final SerializableObjectFormat<Expressions> format = new SerializableObjectFormat<>();
+		final Path expFile = Constants.expressionsOutput.resolve(systemName)
+				.resolve(Constants.groupedPCFileName + group + "." + format.getFileExtension());
+		return FileHandler.load(expFile, format).orElseThrow();
 	}
 
 	private LiteralList parseConfiguration(String configuration) {

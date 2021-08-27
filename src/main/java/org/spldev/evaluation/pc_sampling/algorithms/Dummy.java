@@ -22,11 +22,11 @@
  */
 package org.spldev.evaluation.pc_sampling.algorithms;
 
-import java.io.IOException;
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 
-import org.spldev.evaluation.process.Algorithm;
-import org.spldev.formula.clauses.SolutionList;
+import org.spldev.evaluation.process.*;
+import org.spldev.formula.clauses.*;
 
 public class Dummy extends Algorithm<SolutionList> {
 

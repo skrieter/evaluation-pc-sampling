@@ -22,7 +22,7 @@
  */
 package org.spldev.evaluation.pc_sampling.algorithms;
 
-import java.nio.file.Path;
+import java.nio.file.*;
 
 public class FIDEChvatal extends AFIDESampling_Org {
 
