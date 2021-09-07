@@ -138,7 +138,7 @@ public class TestSuiteParser {
 			for (final String line : Files.readAllLines(file)) {
 				final Matcher matcher = regex.matcher(line);
 				if (matcher.find()) {
-					nodeList.add(Formulas.toCNF(nr.read(matcher.group(2)).get()));
+					nodeList.add(nr.read(matcher.group(2)).flatMap(Formulas::toCNF).get());
 				}
 			}
 		} catch (final IOException e) {

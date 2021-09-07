@@ -96,7 +96,7 @@ public class CSVReader extends Evaluator {
 				final String systemName = values[0];
 				final String formulaString = values[4];
 				System.out.println(systemName);
-				final Formula formula = nodeReader.read(formulaString).map(Formulas::toDNF).orElse(Logger::logProblems);
+				final Formula formula = nodeReader.read(formulaString).flatMap(Formulas::toDNF).orElse(Logger::logProblems);
 				System.out.println(Trees.traverse(formula, new TreePrinter()).get());
 				List<PC> list = map.get(systemName);
 				if (list == null) {
