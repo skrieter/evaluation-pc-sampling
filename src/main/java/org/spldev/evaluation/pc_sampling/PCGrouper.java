@@ -53,7 +53,7 @@ public class PCGrouper extends Evaluator {
 	protected void addCSVWriters() {
 		super.addCSVWriters();
 		groupingWriter = addCSVWriter("grouping.csv",
-				Arrays.asList("ID", "Mode", "Iteration", "Time", "Size", "Error"));
+			Arrays.asList("ID", "Mode", "Iteration", "Time", "Size", "Error"));
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class PCGrouper extends Evaluator {
 	private Expressions evalGroup(Grouping groupingValue, CNF cnf, String systemName) throws Exception {
 		Expressions expressions = null;
 		final PresenceConditionList pcList = TWiseEvaluator
-				.readPCList(cnf == null ? Constants.convertedPCFileName : Constants.convertedPCFMFileName, systemName);
+			.readPCList(cnf == null ? Constants.convertedPCFileName : Constants.convertedPCFMFileName, systemName);
 		final Grouper grouper = new Grouper();
 		for (int i = 0; i < config.systemIterations.getValue(); i++) {
 			groupingWriter.createNewLine();
@@ -147,7 +147,7 @@ public class PCGrouper extends Evaluator {
 		if (expressions != null) {
 			final SerializableObjectFormat<Expressions> format = new SerializableObjectFormat<>();
 			final Path expFile = Constants.expressionsOutput.resolve(config.systemNames.get(systemIndex))
-					.resolve(Constants.groupedPCFileName + groupingValue + "." + format.getFileExtension());
+				.resolve(Constants.groupedPCFileName + groupingValue + "." + format.getFileExtension());
 			FileHandler.save(expressions, expFile, format);
 			Logger.logInfo(Constants.groupedPCFileName + groupingValue + " OK");
 		} else {

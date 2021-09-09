@@ -39,6 +39,7 @@ import org.spldev.formula.expression.io.parse.*;
 import org.spldev.formula.expression.io.parse.NodeReader.*;
 import org.spldev.formula.expression.io.parse.Symbols.*;
 import org.spldev.util.*;
+import org.spldev.util.data.*;
 import org.spldev.util.io.*;
 import org.spldev.util.io.csv.*;
 import org.spldev.util.logging.*;
@@ -69,7 +70,7 @@ public class CSVReader extends Evaluator {
 	protected void addCSVWriters() {
 		super.addCSVWriters();
 		evaluationWriter = addCSVWriter("coverage.csv", Arrays.asList("ModelID", "ModelName", "SystemIteration",
-				"AlgorithmID", "AlgorithmIteration", "PresenceCondition", "Covered"));
+			"AlgorithmID", "AlgorithmIteration", "PresenceCondition", "Covered"));
 	}
 
 	protected final HashMap<String, PresenceConditionManager> expressionMap = new HashMap<>();
@@ -77,11 +78,11 @@ public class CSVReader extends Evaluator {
 	@Override
 	public void evaluate() {
 		final NodeReader nodeReader = new NodeReader();
-		final Symbols symbols = new Symbols();
-		symbols.setSymbol(Operator.NOT, "!");
-		symbols.setSymbol(Operator.AND, "&&");
-		symbols.setSymbol(Operator.OR, "||");
-		symbols.setTextual(false);
+		final Symbols symbols = new Symbols(Arrays.asList( //
+			new Pair<>(Operator.NOT, "!"), //
+			new Pair<>(Operator.AND, "&&"), //
+			new Pair<>(Operator.OR, "||")), //
+			false);
 		nodeReader.setSymbols(symbols);
 		nodeReader.setIgnoreMissingFeatures(ErrorHandling.REMOVE);
 		nodeReader.setIgnoreUnparsableSubExpressions(ErrorHandling.REMOVE);
@@ -96,7 +97,8 @@ public class CSVReader extends Evaluator {
 				final String systemName = values[0];
 				final String formulaString = values[4];
 				System.out.println(systemName);
-				final Formula formula = nodeReader.read(formulaString).flatMap(Formulas::toDNF).orElse(Logger::logProblems);
+				final Formula formula = nodeReader.read(formulaString).flatMap(Formulas::toDNF)
+					.orElse(Logger::logProblems);
 				System.out.println(Trees.traverse(formula, new TreePrinter()).get());
 				List<PC> list = map.get(systemName);
 				if (list == null) {
@@ -164,14 +166,14 @@ public class CSVReader extends Evaluator {
 		List<Path> sampleFileList;
 		try (Stream<Path> fileStream = Files.list(sampleDir)) {
 			sampleFileList = fileStream.filter(Files::isReadable).filter(Files::isRegularFile)
-					.filter(file -> file.getFileName().toString().endsWith(".sample")).collect(Collectors.toList());
+				.filter(file -> file.getFileName().toString().endsWith(".sample")).collect(Collectors.toList());
 		} catch (final IOException e) {
 			Logger.logError(e);
 			tabFormatter.decTabLevel();
 			return;
 		}
 		Collections.sort(sampleFileList,
-				(p1, p2) -> p1.getFileName().toString().compareTo(p2.getFileName().toString()));
+			(p1, p2) -> p1.getFileName().toString().compareTo(p2.getFileName().toString()));
 
 		tabFormatter.decTabLevel();
 		Logger.logInfo("Reading Samples...");
@@ -256,7 +258,7 @@ public class CSVReader extends Evaluator {
 		if (clauseExpression instanceof Literal) {
 			final Literal literal = (Literal) clauseExpression;
 			final int variable = mapping.getIndex(literal.getName())
-					.orElseThrow(() -> new RuntimeException(literal.getName()));
+				.orElseThrow(() -> new RuntimeException(literal.getName()));
 			return new LiteralList(new int[] { literal.isPositive() ? variable : -variable }, Order.NATURAL);
 		} else {
 			final List<? extends Expression> clauseChildren = clauseExpression.getChildren();
@@ -264,11 +266,11 @@ public class CSVReader extends Evaluator {
 				return null;
 			} else {
 				final int[] literals = clauseChildren.stream().filter(literal -> literal != Literal.False)
-						.mapToInt(literal -> {
-							final int variable = mapping.getIndex(literal.getName())
-									.orElseThrow(() -> new RuntimeException(literal.getName()));
-							return ((Literal) literal).isPositive() ? variable : -variable;
-						}).toArray();
+					.mapToInt(literal -> {
+						final int variable = mapping.getIndex(literal.getName())
+							.orElseThrow(() -> new RuntimeException(literal.getName()));
+						return ((Literal) literal).isPositive() ? variable : -variable;
+					}).toArray();
 				return new LiteralList(literals, Order.NATURAL);
 			}
 		}

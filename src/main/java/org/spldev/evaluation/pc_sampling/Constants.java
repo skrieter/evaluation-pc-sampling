@@ -41,7 +41,7 @@ public class Constants {
 	public final static String pcFileExtension = "s";
 
 	public static final Function<String, Predicate<Path>> fileFilterCreator = regex -> file -> Files.isReadable(file)
-			&& Files.isRegularFile(file) && file.getFileName().toString().matches(regex);
+		&& Files.isRegularFile(file) && file.getFileName().toString().matches(regex);
 
 	public static final String FileNameRegex = ".+[.](c|h|cxx|hxx)\\Z";
 	public static final Predicate<Path> fileFilter = fileFilterCreator.apply(FileNameRegex);

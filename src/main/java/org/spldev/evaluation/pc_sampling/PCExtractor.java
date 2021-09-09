@@ -43,7 +43,7 @@ public class PCExtractor extends Evaluator {
 	protected void addCSVWriters() {
 		super.addCSVWriters();
 		extractionWriter = addCSVWriter("extraction.csv",
-				Arrays.asList("ID", "Mode", "Iteration", "Time", "Size", "Error"));
+			Arrays.asList("ID", "Mode", "Iteration", "Time", "Size", "Error"));
 	}
 
 	@Override

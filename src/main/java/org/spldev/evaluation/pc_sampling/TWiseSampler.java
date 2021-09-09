@@ -53,7 +53,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 	protected static final ListProperty<String> mProperty = new ListProperty<>("m", Property.StringConverter);
 	protected static final GroupingProperty grouping = new GroupingProperty();
 	protected static final Property<Integer> randomIterationsProperty = new Property<>("random_iterations",
-			Property.IntegerConverter);
+		Property.IntegerConverter);
 
 	public static int YASA_MIN_SIZE;
 	public static int YASA_MAX_SIZE;
@@ -71,7 +71,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 	protected void addCSVWriters() {
 		super.addCSVWriters();
 		extendCSVWriter(getModelCSVWriter(), Arrays.asList("Configurations", "FMFeatures", "FMConstraints", "FMPCs",
-				"FMPCFeatures", "PCFeatures", "PCConstraints", "PCs"));
+			"FMPCFeatures", "PCFeatures", "PCConstraints", "PCs"));
 		extendCSVWriter(getDataCSVWriter(), Arrays.asList("Size"));
 	}
 
@@ -151,7 +151,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 				case "YA": {
 					for (final String groupingValue : grouping.getValue()) {
 						final Path expressionFile = config.tempPath
-								.resolve("expressions_" + groupingValue + ".expression");
+							.resolve("expressions_" + groupingValue + ".expression");
 						for (final String mValue : mProperty.getValue()) {
 							final YASA yasa = new YASA(sampleFile, modelFile);
 							yasa.setT(tValue);
@@ -236,7 +236,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 		final Expressions readExpressions = readExpressions(config.systemNames.get(systemIndex), group);
 		if (readExpressions != null) {
 			final List<List<ClauseList>> expressionGroups = adaptConditions(cnf, randomCNF,
-					readExpressions.getExpressions());
+				readExpressions.getExpressions());
 			randomizeConditions(expressionGroups, new Random(config.randomSeed.getValue() + systemIteration));
 
 			final ExpressionGroupFormat format = new ExpressionGroupFormat();
@@ -264,7 +264,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 		final String systemName = config.systemNames.get(systemIndex);
 		try {
 			final PresenceConditionList pcfmList = TWiseEvaluator.readPCList(Constants.convertedPCFMFileName,
-					systemName);
+				systemName);
 			final CNF formula = pcfmList.getFormula();
 			final CountSolutionsAnalysis countAnalysis = new CountSolutionsAnalysis();
 			countAnalysis.setTimeout(0);
@@ -314,7 +314,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 		dataCSVWriter.addValue(configurationList.getSolutions().size());
 
 		writeSamples(config.systemIDs.get(systemIndex) + "_" + systemIteration + "_" + algorithmIndex + "_"
-				+ algorithmIteration, configurationList.getSolutions());
+			+ algorithmIteration, configurationList.getSolutions());
 
 		if (Objects.equals("YASA", algorithmList.get(algorithmIndex).getName())) {
 			if (YASA_MAX_SIZE < configurationList.getSolutions().size()) {
@@ -368,10 +368,10 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 	protected void writeSamples(final String sampleMethod, final List<LiteralList> configurationList) {
 		try {
 			Files.write(curSampleDir.resolve(sampleMethod + ".sample"), //
-					configurationList.stream() //
-							.map(this::reorderSolution) //
-							.map(TWiseSampler::toString) //
-							.collect(Collectors.toList()));
+				configurationList.stream() //
+					.map(this::reorderSolution) //
+					.map(TWiseSampler::toString) //
+					.collect(Collectors.toList()));
 		} catch (final IOException e) {
 			Logger.logError(e);
 		}
@@ -379,7 +379,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 
 	private LiteralList reorderSolution(LiteralList solution) {
 		final LiteralList adaptedSolution = solution
-				.adapt(randomizedModelCNF.getVariableMap(), modelCNF.getVariableMap()).get();
+			.adapt(randomizedModelCNF.getVariableMap(), modelCNF.getVariableMap()).get();
 		adaptedSolution.setOrder(Order.INDEX);
 		return adaptedSolution;
 	}

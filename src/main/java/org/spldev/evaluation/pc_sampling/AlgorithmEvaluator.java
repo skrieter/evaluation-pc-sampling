@@ -49,10 +49,10 @@ public abstract class AlgorithmEvaluator<R, A extends Algorithm<R>> extends Eval
 	protected void addCSVWriters() {
 		super.addCSVWriters();
 		dataCSVWriter = addCSVWriter("data.csv", Arrays.asList("ModelID", "AlgorithmID", "SystemIteration",
-				"AlgorithmIteration", "InTime", "NoError", "Time"));
+			"AlgorithmIteration", "InTime", "NoError", "Time"));
 		modelCSVWriter = addCSVWriter("models.csv", Arrays.asList("ModelID", "Name"));
 		algorithmCSVWriter = addCSVWriter("algorithms.csv",
-				Arrays.asList("ModelID", "AlgorithmID", "Name", "Settings"));
+			Arrays.asList("ModelID", "AlgorithmID", "Name", "Settings"));
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public abstract class AlgorithmEvaluator<R, A extends Algorithm<R>> extends Eval
 					algorithmLoop: for (final A algorithm : algorithmList) {
 						algorithmIndex++;
 						for (algorithmIteration = 1; algorithmIteration <= algorithm
-								.getIterations(); algorithmIteration++) {
+							.getIterations(); algorithmIteration++) {
 							try {
 								adaptAlgorithm(algorithm);
 							} catch (final Exception e) {

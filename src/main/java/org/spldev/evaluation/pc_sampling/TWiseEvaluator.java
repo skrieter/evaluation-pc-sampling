@@ -68,7 +68,7 @@ public class TWiseEvaluator extends Evaluator {
 	protected void addCSVWriters() {
 		super.addCSVWriters();
 		evaluationWriter = addCSVWriter("evaluation.csv", Arrays.asList("ModelID", "AlgorithmID", "SystemIteration",
-				"AlgorithmIteration", "SamplePercentage", "Criterion", "Value"));
+			"AlgorithmIteration", "SamplePercentage", "Criterion", "Value"));
 	}
 
 	protected final HashMap<String, PresenceConditionManager> expressionMap = new HashMap<>();
@@ -137,14 +137,14 @@ public class TWiseEvaluator extends Evaluator {
 		List<Path> sampleFileList;
 		try (Stream<Path> fileStream = Files.list(sampleDir)) {
 			sampleFileList = fileStream.filter(Files::isReadable).filter(Files::isRegularFile)
-					.filter(file -> file.getFileName().toString().endsWith(".sample")).collect(Collectors.toList());
+				.filter(file -> file.getFileName().toString().endsWith(".sample")).collect(Collectors.toList());
 		} catch (final IOException e) {
 			Logger.logError(e);
 			tabFormatter.decTabLevel();
 			return;
 		}
 		Collections.sort(sampleFileList,
-				(p1, p2) -> p1.getFileName().toString().compareTo(p2.getFileName().toString()));
+			(p1, p2) -> p1.getFileName().toString().compareTo(p2.getFileName().toString()));
 
 		tabFormatter.decTabLevel();
 		Logger.logInfo("Reading Samples...");
@@ -202,7 +202,7 @@ public class TWiseEvaluator extends Evaluator {
 		for (final String groupingValue : coverageGrouping.getValue()) {
 			gIndex++;
 			final List<List<PresenceCondition>> nodes = readExpressions(groupingValue, util)
-					.getGroupedPresenceConditions();
+				.getGroupedPresenceConditions();
 			int tIndex = 0;
 			for (final String tValue : coverageT.getValue()) {
 				tIndex++;
@@ -210,7 +210,7 @@ public class TWiseEvaluator extends Evaluator {
 
 				coverageCriterion = groupingValue + "_t" + tValue;
 				coverageStatistics = tWiseStatisticGenerator.getCoverage(samples, nodes, Integer.parseInt(tValue),
-						ConfigurationScore.NONE, true);
+					ConfigurationScore.NONE, true);
 				for (int i = 0; i < sampleArguments.size(); i++) {
 					final int i2 = i;
 					writeCSV(evaluationWriter, writer -> writeCoverage(writer, i2));
@@ -224,7 +224,7 @@ public class TWiseEvaluator extends Evaluator {
 	private PresenceConditionManager readExpressions(String group, TWiseConfigurationUtil util) {
 		try {
 			return new PresenceConditionManager(util,
-					readExpressions(group, config.systemNames.get(systemIndex)).getExpressions());
+				readExpressions(group, config.systemNames.get(systemIndex)).getExpressions());
 		} catch (final Exception e) {
 			Logger.logError(e);
 			return null;
@@ -234,14 +234,14 @@ public class TWiseEvaluator extends Evaluator {
 	public static PresenceConditionList readPCList(String name, String systemName) throws Exception {
 		final SerializableObjectFormat<PresenceConditionList> format = new SerializableObjectFormat<>();
 		final Path pcListFile = Constants.expressionsOutput.resolve(systemName)
-				.resolve(name + "." + format.getFileExtension());
+			.resolve(name + "." + format.getFileExtension());
 		return FileHandler.load(pcListFile, format).orElseThrow();
 	}
 
 	public static Expressions readExpressions(String group, String systemName) throws Exception {
 		final SerializableObjectFormat<Expressions> format = new SerializableObjectFormat<>();
 		final Path expFile = Constants.expressionsOutput.resolve(systemName)
-				.resolve(Constants.groupedPCFileName + group + "." + format.getFileExtension());
+			.resolve(Constants.groupedPCFileName + group + "." + format.getFileExtension());
 		return FileHandler.load(expFile, format).orElseThrow();
 	}
 

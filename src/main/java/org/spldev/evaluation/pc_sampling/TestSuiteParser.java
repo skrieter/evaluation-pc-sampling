@@ -81,17 +81,17 @@ public class TestSuiteParser {
 
 		final FileFilter fileFilter = new FileFilter("testSuite_mutation_\\d+[.]txt");
 		final List<Formula> mutations = Files.walk(filePath) //
-				.filter(fileFilter) // Filter mutation files
-				.peek(System.out::println) // Console output
-				.map(TestSuiteParser::extractNodes) // Extract test conditions
-				.collect(Collectors.toList()); // To list
+			.filter(fileFilter) // Filter mutation files
+			.peek(System.out::println) // Console output
+			.map(TestSuiteParser::extractNodes) // Extract test conditions
+			.collect(Collectors.toList()); // To list
 		mutations.forEach(System.out::println);
 
 		final Path resultDir = Paths.get("gen/results/");
 		final MinDir minDir = new MinDir();
 		final FileFilter fileFilter2 = new FileFilter("\\d+");
 		final Optional<Path> lastResultPath = Files.walk(resultDir).filter(Files::isDirectory).filter(fileFilter2)
-				.min(minDir);
+			.min(minDir);
 		if (lastResultPath.isPresent()) {
 			final Path sampleDir = lastResultPath.get().resolve("/samples/");
 			final String name = mode + "_" + t + "_" + systemName;
@@ -101,7 +101,7 @@ public class TestSuiteParser {
 	}
 
 	private static List<List<String>> getSamples(Path sampleDir, String name, final ArrayList<String> features)
-			throws IOException {
+		throws IOException {
 		final Path sampleFile = sampleDir.resolve(name + ".sample");
 		final List<List<String>> selectedFeatureList = new ArrayList<>();
 		for (final String line : Files.readAllLines(sampleFile)) {

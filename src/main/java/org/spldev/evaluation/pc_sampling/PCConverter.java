@@ -51,7 +51,7 @@ public class PCConverter extends Evaluator {
 	protected void addCSVWriters() {
 		super.addCSVWriters();
 		conversionWriter = addCSVWriter("conversion.csv",
-				Arrays.asList("ID", "Mode", "Iteration", "Time", "Size", "Error", "Clauses", "Literals"));
+			Arrays.asList("ID", "Mode", "Iteration", "Time", "Size", "Error", "Clauses", "Literals"));
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class PCConverter extends Evaluator {
 		if (pcList != null) {
 			final SerializableObjectFormat<PresenceConditionList> format = new SerializableObjectFormat<>();
 			final Path pcListFile = Constants.expressionsOutput.resolve(config.systemNames.get(systemIndex))
-					.resolve(fileName + "." + format.getFileExtension());
+				.resolve(fileName + "." + format.getFileExtension());
 			FileHandler.save(pcList, pcListFile, format);
 		}
 		return pcList;
