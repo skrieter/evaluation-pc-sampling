@@ -112,8 +112,7 @@ public abstract class AlgorithmEvaluator<R, A extends Algorithm<R>> extends Eval
 							}
 							try {
 								logRun();
-								result = new Result<>();
-								processRunner.run(algorithm, result);
+								result = processRunner.run(algorithm);
 								writeCSV(dataCSVWriter, this::writeData);
 							} catch (final Exception e) {
 								Logger.logError(e);
