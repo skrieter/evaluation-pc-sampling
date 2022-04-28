@@ -27,14 +27,15 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.regex.*;
 
+import org.spldev.clauses.*;
+import org.spldev.clauses.LiteralList.*;
+import org.spldev.clauses.solutions.*;
 import org.spldev.evaluation.pc_sampling.*;
 import org.spldev.evaluation.process.*;
-import org.spldev.formula.clauses.*;
-import org.spldev.formula.clauses.LiteralList.*;
-import org.spldev.formula.expression.atomic.literal.*;
+import org.spldev.formula.structure.atomic.literal.*;
 import org.spldev.util.logging.*;
 
-public abstract class PLEDGE extends Algorithm<org.spldev.formula.clauses.SolutionList> {
+public abstract class PLEDGE extends Algorithm<org.spldev.clauses.solutions.SolutionList> {
 
 	private final Path outputFile;
 	private final Path fmFile;

@@ -29,9 +29,9 @@ import java.util.function.*;
 import java.util.regex.*;
 import java.util.stream.*;
 
-import org.spldev.formula.expression.*;
-import org.spldev.formula.expression.compound.*;
-import org.spldev.formula.expression.io.parse.*;
+import org.spldev.formula.io.textual.*;
+import org.spldev.formula.structure.*;
+import org.spldev.formula.structure.compound.*;
 
 public class TestSuiteParser {
 

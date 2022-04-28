@@ -27,19 +27,20 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
+import org.spldev.analysis.sat4j.*;
+import org.spldev.clauses.*;
+import org.spldev.clauses.LiteralList.*;
+import org.spldev.clauses.io.*;
+import org.spldev.clauses.solutions.*;
 import org.spldev.evaluation.pc_sampling.algorithms.*;
 import org.spldev.evaluation.pc_sampling.properties.*;
 import org.spldev.evaluation.process.*;
 import org.spldev.evaluation.properties.*;
 import org.spldev.evaluation.util.*;
-import org.spldev.formula.analysis.sat4j.*;
-import org.spldev.formula.clauses.*;
-import org.spldev.formula.clauses.LiteralList.*;
-import org.spldev.formula.expression.*;
-import org.spldev.formula.expression.io.*;
-import org.spldev.formula.io.*;
+import org.spldev.formula.io.dimacs.*;
+import org.spldev.formula.structure.*;
 import org.spldev.pc_extraction.convert.*;
-import org.spldev.util.Result;
+import org.spldev.util.data.Result;
 import org.spldev.util.io.*;
 import org.spldev.util.io.csv.*;
 import org.spldev.util.io.format.*;
@@ -63,7 +64,7 @@ public class TWiseSampler extends AlgorithmEvaluator<SolutionList, Algorithm<Sol
 	protected Path samplesDir, curSampleDir;
 
 	@Override
-	public String getId() {
+	public String getName() {
 		return "eval-twise-sampler";
 	}
 

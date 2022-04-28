@@ -27,18 +27,18 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
+import org.spldev.analysis.sat4j.solver.*;
+import org.spldev.analysis.sat4j.twise.*;
+import org.spldev.analysis.sat4j.twise.PresenceCondition;
+import org.spldev.analysis.sat4j.twise.TWiseStatisticGenerator.*;
+import org.spldev.clauses.*;
+import org.spldev.clauses.LiteralList.*;
 import org.spldev.evaluation.*;
 import org.spldev.evaluation.pc_sampling.properties.*;
 import org.spldev.evaluation.properties.*;
-import org.spldev.formula.analysis.sat4j.twise.*;
-import org.spldev.formula.analysis.sat4j.twise.PresenceCondition;
-import org.spldev.formula.analysis.sat4j.twise.TWiseStatisticGenerator.*;
-import org.spldev.formula.clauses.*;
-import org.spldev.formula.clauses.LiteralList.*;
-import org.spldev.formula.expression.io.*;
-import org.spldev.formula.solver.sat4j.*;
+import org.spldev.formula.io.dimacs.*;
 import org.spldev.pc_extraction.convert.*;
-import org.spldev.util.*;
+import org.spldev.util.data.*;
 import org.spldev.util.io.*;
 import org.spldev.util.io.binary.*;
 import org.spldev.util.io.csv.*;
@@ -60,7 +60,7 @@ public class TWiseEvaluator extends Evaluator {
 	private String coverageCriterion;
 
 	@Override
-	public String getId() {
+	public String getName() {
 		return "eval-twise-evaluator";
 	}
 

@@ -35,7 +35,7 @@ public class PCExtractor extends Evaluator {
 	protected CSVWriter extractionWriter;
 
 	@Override
-	public String getId() {
+	public String getName() {
 		return "eval-pc-extractor";
 	}
 

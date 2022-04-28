@@ -27,18 +27,17 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
+import org.spldev.analysis.sat4j.twise.*;
+import org.spldev.clauses.*;
+import org.spldev.clauses.LiteralList.*;
 import org.spldev.evaluation.*;
-import org.spldev.formula.analysis.sat4j.twise.*;
-import org.spldev.formula.clauses.*;
-import org.spldev.formula.clauses.LiteralList.*;
-import org.spldev.formula.expression.*;
-import org.spldev.formula.expression.atomic.literal.*;
-import org.spldev.formula.expression.compound.*;
-import org.spldev.formula.expression.io.*;
-import org.spldev.formula.expression.io.parse.*;
-import org.spldev.formula.expression.io.parse.NodeReader.*;
-import org.spldev.formula.expression.io.parse.Symbols.*;
-import org.spldev.util.*;
+import org.spldev.formula.io.dimacs.*;
+import org.spldev.formula.io.textual.*;
+import org.spldev.formula.io.textual.NodeReader.*;
+import org.spldev.formula.io.textual.Symbols.*;
+import org.spldev.formula.structure.*;
+import org.spldev.formula.structure.atomic.literal.*;
+import org.spldev.formula.structure.compound.*;
 import org.spldev.util.data.*;
 import org.spldev.util.io.*;
 import org.spldev.util.io.csv.*;
@@ -49,7 +48,7 @@ import org.spldev.util.tree.visitor.*;
 public class CSVReader extends Evaluator {
 
 	@Override
-	public String getId() {
+	public String getName() {
 		return "eval-csv-reader";
 	}
 

@@ -25,8 +25,8 @@ package org.spldev.evaluation.pc_sampling.algorithms;
 import java.io.*;
 import java.util.*;
 
+import org.spldev.clauses.solutions.*;
 import org.spldev.evaluation.process.*;
-import org.spldev.formula.clauses.*;
 
 public class Dummy extends Algorithm<SolutionList> {
 

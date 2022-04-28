@@ -25,10 +25,10 @@ package org.spldev.evaluation.pc_sampling.algorithms;
 import java.io.*;
 import java.nio.file.*;
 
+import org.spldev.clauses.solutions.*;
+import org.spldev.clauses.solutions.io.*;
 import org.spldev.evaluation.process.*;
-import org.spldev.formula.clauses.*;
-import org.spldev.formula.io.*;
-import org.spldev.util.Result;
+import org.spldev.util.data.Result;
 import org.spldev.util.io.*;
 import org.spldev.util.logging.*;
 
@@ -72,7 +72,7 @@ public abstract class AFIDESampling extends Algorithm<SolutionList> {
 
 	@Override
 	public SolutionList parseResults() throws IOException {
-		final Result<SolutionList> parse = FileHandler.load(outputFile, new ConfigurationListFormat());
+		final Result<SolutionList> parse = FileHandler.load(outputFile, new ListFormat());
 		if (parse.isEmpty()) {
 			Logger.logProblems(parse.getProblems());
 			throw new IOException();

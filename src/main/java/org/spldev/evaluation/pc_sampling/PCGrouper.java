@@ -26,14 +26,14 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import org.spldev.clauses.*;
 import org.spldev.evaluation.*;
 import org.spldev.evaluation.util.*;
-import org.spldev.formula.clauses.*;
-import org.spldev.formula.expression.*;
-import org.spldev.formula.expression.io.*;
+import org.spldev.formula.io.dimacs.*;
+import org.spldev.formula.structure.*;
 import org.spldev.pc_extraction.convert.*;
 import org.spldev.pc_extraction.convert.Grouper.*;
-import org.spldev.util.*;
+import org.spldev.util.data.*;
 import org.spldev.util.io.*;
 import org.spldev.util.io.binary.*;
 import org.spldev.util.io.csv.*;
@@ -45,7 +45,7 @@ public class PCGrouper extends Evaluator {
 	protected CSVWriter groupingWriter;
 
 	@Override
-	public String getId() {
+	public String getName() {
 		return "eval-pc-grouper";
 	}
 

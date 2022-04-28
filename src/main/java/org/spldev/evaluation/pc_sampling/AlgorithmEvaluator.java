@@ -24,9 +24,9 @@ package org.spldev.evaluation.pc_sampling;
 
 import java.util.*;
 
+import org.spldev.clauses.*;
 import org.spldev.evaluation.*;
 import org.spldev.evaluation.process.*;
-import org.spldev.formula.clauses.*;
 import org.spldev.util.io.csv.*;
 import org.spldev.util.logging.*;
 
